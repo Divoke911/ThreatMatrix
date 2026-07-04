@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -11,4 +12,8 @@ class Config:
         'postgresql://postgres:postgres@localhost:5432/threatmatrix'
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # JWT Configurations
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'dev-jwt-secret-key-change-me')
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)

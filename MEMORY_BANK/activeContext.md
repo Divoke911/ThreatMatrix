@@ -4,11 +4,14 @@
 **Phase 1: Foundation — Auth + DB schema + Dashboard skeleton**
 
 ## Current Focus
-- Docker containerization configuration (creating Dockerfiles, configuring Compose setup).
-- Implementing JWT authentication and user session management.
+- React frontend project initialization and creating the basic Dashboard skeleton.
+- Finalizing the remaining Docker configuration for the frontend service.
 
 ## Recent Changes
-- Defined SQLAlchemy database models for all 7 tables matching the PRD specification (including composite PKs, db indexes, and native ENUM constraints).
-- Created application entry point and configuration files in `backend/app/config.py`, `backend/app/__init__.py`, `backend/run.py`.
-- Initialized database migrations via Flask-Migrate and generated the initial Alembic migration scripts.
-- Added root `.gitignore` to keep the workspace clean of local environment and db artifacts.
+- Implemented full JWT authentication and RBAC backend module:
+  - Added password hashing/verification utilities to the `User` model using `bcrypt`.
+  - Added `TokenBlacklist` table and integrated full token invalidation for both access and refresh tokens on logout.
+  - Implemented `@role_required` decorator that extracts role claims directly from JWT payload without database lookups.
+  - Added endpoints `/api/auth/login` (generic errors), `/api/auth/logout`, `/api/auth/refresh`.
+  - Added and applied migrations for the new `token_blacklist` table in the PostgreSQL Docker service.
+  - Created a comprehensive integration test suite `test_auth_flow.py` and successfully ran it inside the backend Docker container (all tests passed!).
