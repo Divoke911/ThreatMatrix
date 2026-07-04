@@ -199,3 +199,173 @@ def update_alert(alert_id):
         'created_at': alert.created_at.isoformat(),
         'updated_at': alert.updated_at.isoformat()
     }), 200
+
+
+@alerts_bp.route('/<uuid:alert_id>/ai-analysis', methods=['POST'])
+@jwt_required()
+@role_required(['admin', 'analyst'])
+def trigger_ai_analysis(alert_id):
+    import os
+    import json
+    from openai import OpenAI
+
+    alert = Alert.query.get_or_404(alert_id)
+    
+    # Check if AI reports already exist
+    force_refresh = request.args.get('force_refresh', 'false').lower() == 'true'
+    existing_reports = AIReport.query.filter_by(alert_id=alert.id).all()
+    
+    if existing_reports and not force_refresh:
+        return jsonify({
+            'msg': 'AI reports already resolved for this alert.',
+            'cached': True
+        }), 200
+
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return jsonify({
+            'msg': 'Groq API Key (GROQ_API_KEY) is not configured in backend environment parameters.',
+            'error': 'Missing environment keys'
+        }), 500
+        
+    model_name = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+    
+    # Initialize client
+    client = OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=api_key
+    )
+
+    log_preview = str(alert.raw_log)
+
+    system_prompt = (
+        "You are an expert Security Analyst. Analyse the security alert and respond ONLY with a valid JSON object matching the following structure:\n"
+        "{\n"
+        "  \"explanation\": {\n"
+        "    \"summary\": \"Plain English summary of the alert.\",\n"
+        "    \"details\": \"In-depth explanation of what the alert means and why it might matter.\"\n"
+        "  },\n"
+        "  \"recommendation\": {\n"
+        "    \"steps\": [\n"
+        "      \"First containment or investigation step.\",\n"
+        "      \"Second containment or investigation step.\"\n"
+        "    ]\n"
+        "  },\n"
+        "  \"mitre_mapping\": {\n"
+        "    \"techniques\": [\n"
+        "      {\n"
+        "        \"id\": \"MITRE ATT&CK technique ID (e.g. T1059)\",\n"
+        "        \"name\": \"MITRE ATT&CK technique name\",\n"
+        "        \"tactic\": \"MITRE ATT&CK tactic name (e.g. Execution)\",\n"
+        "        \"rationale\": \"Why this technique maps to the alert description.\"\n"
+        "      }\n"
+        "    ]\n"
+        "  },\n"
+        "  \"log_summary\": {\n"
+        "    \"summary\": \"Condensed narrative summarizing the raw log details.\",\n"
+        "    \"indicators\": [\n"
+        "      \"Extracted indicator of compromise (IOC) such as an IP address, user, command string, or filename.\"\n"
+        "    ]\n"
+        "  }\n"
+        "}\n"
+        "Do not include any conversational markdown framing (like ```json). Just output raw valid JSON."
+    )
+
+    user_prompt = f"Alert Title: {alert.title}\nSeverity: {alert.severity}\nSource: {alert.source}\nSource IP: {alert.source_ip}\nRaw Log: {log_preview}"
+
+    attempts = 2
+    success = False
+    parsed_json = None
+    last_error = ""
+
+    for attempt in range(attempts):
+        try:
+            chat_completion = client.chat.completions.create(
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                model=model_name,
+                response_format={"type": "json_object"},
+                temperature=0.2,
+                timeout=25.0
+            )
+            raw_content = chat_completion.choices[0].message.content
+            parsed_json = json.loads(raw_content)
+
+            # Simple Schema Validation
+            required_keys = ['explanation', 'recommendation', 'mitre_mapping', 'log_summary']
+            if all(key in parsed_json for key in required_keys):
+                if (
+                    isinstance(parsed_json['explanation'], dict) and
+                    isinstance(parsed_json['recommendation'], dict) and
+                    isinstance(parsed_json['mitre_mapping'], dict) and
+                    isinstance(parsed_json['log_summary'], dict) and
+                    'summary' in parsed_json['explanation'] and
+                    'details' in parsed_json['explanation'] and
+                    'steps' in parsed_json['recommendation'] and
+                    'techniques' in parsed_json['mitre_mapping'] and
+                    'summary' in parsed_json['log_summary'] and
+                    'indicators' in parsed_json['log_summary']
+                ):
+                    success = True
+                    break
+                else:
+                    last_error = "Parsed JSON fields or types did not match the expected schema structure."
+            else:
+                last_error = f"Parsed JSON was missing one of the required schema categories: {required_keys}"
+        except json.JSONDecodeError as jde:
+            last_error = f"JSON Decode Error: {str(jde)}"
+        except Exception as e:
+            last_error = f"Groq API connection error: {str(e)}"
+
+    if not success:
+        return jsonify({
+            'msg': 'AI Analyst agent failed to generate a schema-valid response.',
+            'error': last_error
+        }), 502
+
+    # Clear old reports to prevent duplicate categories
+    AIReport.query.filter_by(alert_id=alert.id).delete()
+
+    # Save 4 separate AIReport rows
+    reports_to_add = [
+        AIReport(
+            alert_id=alert.id,
+            report_type='explanation',
+            content=parsed_json['explanation'],
+            model_used=model_name,
+            created_at=datetime.utcnow()
+        ),
+        AIReport(
+            alert_id=alert.id,
+            report_type='recommendation',
+            content=parsed_json['recommendation'],
+            model_used=model_name,
+            created_at=datetime.utcnow()
+        ),
+        AIReport(
+            alert_id=alert.id,
+            report_type='mitre_mapping',
+            content=parsed_json['mitre_mapping'],
+            model_used=model_name,
+            created_at=datetime.utcnow()
+        ),
+        AIReport(
+            alert_id=alert.id,
+            report_type='log_summary',
+            content=parsed_json['log_summary'],
+            model_used=model_name,
+            created_at=datetime.utcnow()
+        )
+    ]
+
+    for rep in reports_to_add:
+        db.session.add(rep)
+
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'AI reports successfully generated and persisted.',
+        'cached': False
+    }), 201

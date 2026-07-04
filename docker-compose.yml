@@ -27,6 +27,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/threatmatrix
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key}
       - LLM_API_KEY=${LLM_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
     depends_on:
       - db
 

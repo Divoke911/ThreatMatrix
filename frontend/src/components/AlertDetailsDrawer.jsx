@@ -3,7 +3,7 @@ import api from '../services/api';
 import Badge from './Badge';
 import Button from './Button';
 import CreateIncidentModal from './CreateIncidentModal';
-import { X, ShieldAlert, Terminal, Link2, Sparkles, Link as LinkIcon } from 'lucide-react';
+import { X, ShieldAlert, Terminal, Link2, Sparkles, Link as LinkIcon, RefreshCw } from 'lucide-react';
 
 const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   const [alert, setAlert] = useState(null);
@@ -25,27 +25,49 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   const isViewer = userRole === 'viewer';
   const isClosed = alert?.status === 'closed';
 
-  useEffect(() => {
-    if (!alertId) return;
-    
-    const fetchAlertDetails = async () => {
-      setLoading(true);
-      setError('');
-      try {
-        const resp = await api.get(`/alerts/${alertId}`);
-        setAlert(resp.data);
-        setTempStatus(resp.data.status);
-        setTempSeverity(resp.data.severity);
-      } catch (err) {
-        setError('Failed to load alert payload details.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
+  const fetchAlertDetails = async () => {
+    if (!alertId) return;
+    setLoading(true);
+    setError('');
+    try {
+      const resp = await api.get(`/alerts/${alertId}`);
+      setAlert(resp.data);
+      setTempStatus(resp.data.status);
+      setTempSeverity(resp.data.severity);
+    } catch (err) {
+      setError('Failed to load alert payload details.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAlertDetails();
   }, [alertId]);
+
+  const handleRunAIAnalysis = async (force = false) => {
+    if (isViewer) return;
+    setAiLoading(true);
+    setAiError('');
+    try {
+      await api.post(`/alerts/${alertId}/ai-analysis`, null, {
+        params: { force_refresh: force }
+      });
+      await fetchAlertDetails();
+      if (onAlertUpdated) {
+        onAlertUpdated();
+      }
+    } catch (err) {
+      const errMsg = err.response?.data?.error || err.response?.data?.msg || 'AI Agent failed to respond.';
+      setAiError(errMsg);
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const handleSaveChanges = async () => {
     if (isViewer) return;
@@ -253,12 +275,43 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
 
           {/* Pre-seeded AI Reports */}
           <div>
-            <h4 className="text-[10px] font-mono text-text-secondary uppercase tracking-wider mb-2 flex items-center space-x-1.5">
-              <Sparkles size={12} className="text-accent-cyan" />
-              <span>AI Analyst Insights</span>
+            <h4 className="text-[10px] font-mono text-text-secondary uppercase tracking-wider mb-2 flex items-center justify-between">
+              <div className="flex items-center space-x-1.5">
+                <Sparkles size={12} className="text-accent-cyan" />
+                <span>AI Analyst Insights</span>
+              </div>
+              {alert.ai_reports && alert.ai_reports.length > 0 && !isViewer && (
+                <button 
+                  onClick={() => handleRunAIAnalysis(true)} 
+                  disabled={aiLoading}
+                  className="text-[8px] font-mono text-accent-cyan hover:underline uppercase disabled:opacity-40"
+                >
+                  {aiLoading ? 'Refreshing...' : 'Force Refresh'}
+                </button>
+              )}
             </h4>
-            {alert.ai_reports && alert.ai_reports.length > 0 ? (
+            
+            {aiLoading ? (
+              <div className="p-5 rounded bg-dark-panel/40 border border-dark-border/40 text-center space-y-3">
+                <RefreshCw className="mx-auto text-accent-cyan animate-spin" size={18} />
+                <p className="text-[10px] font-mono text-accent-cyan tracking-wider uppercase">AI Analyst reasoning in progress...</p>
+                <p className="text-[9px] text-text-secondary font-mono">This may take 3-5 seconds to generate & schema-validate response.</p>
+              </div>
+            ) : aiError ? (
+              <div className="p-4 rounded bg-severity-critical/10 border border-severity-critical/20 text-center space-y-3">
+                <p className="text-[10px] font-mono text-severity-critical tracking-wider uppercase">Analysis Inference Failed</p>
+                <p className="text-[9px] text-text-primary font-mono bg-dark-base/50 p-2 rounded border border-dark-border/40">{aiError}</p>
+                <div className="flex gap-2 justify-center">
+                  <Button variant="secondary" size="sm" onClick={() => handleRunAIAnalysis(true)} className="font-mono text-[9px] uppercase py-1">
+                    Retry Inference
+                  </Button>
+                </div>
+              </div>
+            ) : alert.ai_reports && alert.ai_reports.length > 0 ? (
               <div className="space-y-4">
+                <div className="text-[8px] font-mono text-text-secondary uppercase mb-1">
+                  ⚠️ AI-Generated Content - Verify accuracy and cross-reference with timeline notes.
+                </div>
                 {alert.ai_reports.map(report => (
                   <div key={report.id} className="p-4 rounded bg-gradient-to-br from-dark-panel to-dark-base border border-accent-cyan/15 relative overflow-hidden">
                     <div className="absolute top-0 right-0 bg-accent-cyan/10 border-l border-b border-accent-cyan/20 text-[8px] font-mono px-2 py-0.5 text-accent-cyan uppercase">
@@ -268,20 +321,20 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                     <div className="text-xs space-y-2 text-text-primary leading-relaxed">
                       {report.report_type === 'explanation' && (
                         <>
-                          <p><strong>Summary:</strong> {report.content.summary}</p>
-                          <p><strong>Details:</strong> {report.content.details}</p>
+                          <p><strong>Summary:</strong> {report.content?.summary}</p>
+                          <p><strong>Details:</strong> {report.content?.details}</p>
                         </>
                       )}
                       {report.report_type === 'recommendation' && (
                         <ul className="list-disc pl-4 space-y-1.5">
-                          {report.content.steps.map((step, idx) => (
+                          {Array.isArray(report.content?.steps) && report.content.steps.map((step, idx) => (
                             <li key={idx}>{step}</li>
                           ))}
                         </ul>
                       )}
                       {report.report_type === 'mitre_mapping' && (
                         <div className="space-y-2 font-mono text-[9px] mt-2">
-                          {report.content.techniques.map((tech, idx) => (
+                          {Array.isArray(report.content?.techniques) && report.content.techniques.map((tech, idx) => (
                             <div key={idx} className="p-2 bg-dark-base border border-dark-border rounded">
                               <p className="text-accent-cyan font-semibold">{tech.id}: {tech.name}</p>
                               <p className="text-text-secondary text-[8px]">Tactic: {tech.tactic}</p>
@@ -292,9 +345,9 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                       )}
                       {report.report_type === 'log_summary' && (
                         <>
-                          <p>{report.content.summary}</p>
+                          <p>{report.content?.summary}</p>
                           <div className="flex flex-wrap gap-1.5 mt-2.5">
-                            {report.content.indicators.map((ind, idx) => (
+                            {Array.isArray(report.content?.indicators) && report.content.indicators.map((ind, idx) => (
                               <span key={idx} className="px-2 py-0.5 rounded bg-dark-base border border-dark-border text-[9px] font-mono text-text-secondary">
                                 {ind}
                               </span>
@@ -368,14 +421,17 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                 </Button>
               </div>
             )}
-            <Button
-              variant="primary"
-              disabled
-              className="w-full font-mono text-[10px] uppercase cursor-not-allowed"
-              title="AI Analysis Trigger will unlock in Phase 3"
-            >
-              Run AI Analyst Agent (Phase 3)
-            </Button>
+            {(!alert.ai_reports || alert.ai_reports.length === 0) && (
+              <Button
+                variant="primary"
+                disabled={isViewer || aiLoading}
+                onClick={() => handleRunAIAnalysis(false)}
+                className="w-full font-mono text-[10px] uppercase mt-2"
+                title={isViewer ? "Viewer accounts cannot trigger AI models" : "Triggers LLM alert explanation, MITRE matching & actions"}
+              >
+                {aiLoading ? 'Running AI Analyst...' : 'Run AI Analyst Agent'}
+              </Button>
+            )}
           </div>
 
         </div>
