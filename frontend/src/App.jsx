@@ -3,15 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import AlertsPage from './pages/AlertsPage';
 import Layout from './components/Layout';
-
-// Inline simple skeletons for other routes
-const AlertsPage = () => (
-  <div className="space-y-4">
-    <h1 className="text-2xl font-bold tracking-tight">Security Alerts</h1>
-    <p className="text-sm font-mono text-text-secondary">Alert management console skeleton. Phase 2 implementation target.</p>
-  </div>
-);
 
 const IncidentsPage = () => (
   <div className="space-y-4">
