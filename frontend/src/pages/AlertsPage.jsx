@@ -16,12 +16,19 @@ const AlertsPage = () => {
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
 
-  // Filters State
+  // Applied Filters State
   const [search, setSearch] = useState('');
   const [severity, setSeverity] = useState('');
   const [status, setStatus] = useState('');
   const [source, setSource] = useState('');
   const [sort, setSort] = useState('created_at_desc');
+
+  // Staged Temp Filters State
+  const [tempSearch, setTempSearch] = useState('');
+  const [tempSeverity, setTempSeverity] = useState('');
+  const [tempStatus, setTempStatus] = useState('');
+  const [tempSource, setTempSource] = useState('');
+  const [tempSort, setTempSort] = useState('created_at_desc');
 
   // Selected Alert for Details Drawer
   const [selectedAlertId, setSelectedAlertId] = useState(null);
@@ -57,7 +64,11 @@ const AlertsPage = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     setPage(1);
-    fetchAlerts();
+    setSearch(tempSearch);
+    setSeverity(tempSeverity);
+    setStatus(tempStatus);
+    setSource(tempSource);
+    setSort(tempSort);
   };
 
   const handleAlertUpdated = (updatedAlert) => {
@@ -65,10 +76,17 @@ const AlertsPage = () => {
   };
 
   const clearFilters = () => {
+    setTempSearch('');
+    setTempSeverity('');
+    setTempStatus('');
+    setTempSource('');
+    setTempSort('created_at_desc');
+
     setSearch('');
     setSeverity('');
     setStatus('');
     setSource('');
+    setSort('created_at_desc');
     setPage(1);
   };
 
@@ -103,8 +121,8 @@ const AlertsPage = () => {
               </span>
               <input
                 type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={tempSearch}
+                onChange={(e) => setTempSearch(e.target.value)}
                 placeholder="Search alert title or source IP..."
                 className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
               />
@@ -115,8 +133,8 @@ const AlertsPage = () => {
           <div className="w-full md:w-36">
             <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1.5">Severity</label>
             <select
-              value={severity}
-              onChange={(e) => { setSeverity(e.target.value); setPage(1); }}
+              value={tempSeverity}
+              onChange={(e) => setTempSeverity(e.target.value)}
               className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL LEVELS</option>
@@ -131,8 +149,8 @@ const AlertsPage = () => {
           <div className="w-full md:w-36">
             <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1.5">Status</label>
             <select
-              value={status}
-              onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+              value={tempStatus}
+              onChange={(e) => setTempStatus(e.target.value)}
               className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL STATES</option>
@@ -147,8 +165,8 @@ const AlertsPage = () => {
           <div className="w-full md:w-36">
             <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1.5">Log Source</label>
             <select
-              value={source}
-              onChange={(e) => { setSource(e.target.value); setPage(1); }}
+              value={tempSource}
+              onChange={(e) => setTempSource(e.target.value)}
               className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL LOGS</option>
@@ -163,8 +181,8 @@ const AlertsPage = () => {
           <div className="w-full md:w-40">
             <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1.5">Sort order</label>
             <select
-              value={sort}
-              onChange={(e) => { setSort(e.target.value); setPage(1); }}
+              value={tempSort}
+              onChange={(e) => setTempSort(e.target.value)}
               className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="created_at_desc">TIME DESC (NEWEST)</option>

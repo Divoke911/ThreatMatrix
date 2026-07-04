@@ -10,6 +10,10 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
 
+  // Staged states for status and severity updates
+  const [tempStatus, setTempStatus] = useState('');
+  const [tempSeverity, setTempSeverity] = useState('');
+
   const isViewer = userRole === 'viewer';
 
   useEffect(() => {
@@ -21,6 +25,8 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
       try {
         const resp = await api.get(`/alerts/${alertId}`);
         setAlert(resp.data);
+        setTempStatus(resp.data.status);
+        setTempSeverity(resp.data.severity);
       } catch (err) {
         setError('Failed to load alert payload details.');
         console.error(err);
@@ -32,17 +38,24 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
     fetchAlertDetails();
   }, [alertId]);
 
-  const handleUpdate = async (field, value) => {
+  const handleSaveChanges = async () => {
     if (isViewer) return;
     setUpdating(true);
     try {
-      const resp = await api.patch(`/alerts/${alertId}`, { [field]: value });
-      setAlert(prev => ({ ...prev, [field]: value }));
+      const resp = await api.patch(`/alerts/${alertId}`, {
+        status: tempStatus,
+        severity: tempSeverity
+      });
+      setAlert(prev => ({
+        ...prev,
+        status: tempStatus,
+        severity: tempSeverity
+      }));
       if (onAlertUpdated) {
         onAlertUpdated(resp.data);
       }
     } catch (err) {
-      console.error("Failed to update alert", err);
+      console.error("Failed to update alert parameters", err);
       alert("Unauthorized or database failure while modifying alert.");
     } finally {
       setUpdating(false);
@@ -132,35 +145,52 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
           </div>
 
           {/* RBAC Update Dropdowns */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider mb-2">Change Status</label>
-              <select
-                disabled={isViewer || updating}
-                value={alert.status}
-                onChange={(e) => handleUpdate('status', e.target.value)}
-                className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
-              >
-                <option value="new">NEW</option>
-                <option value="in_review">IN REVIEW</option>
-                <option value="escalated">ESCALATED</option>
-                <option value="closed">CLOSED</option>
-              </select>
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider mb-2">Change Status</label>
+                <select
+                  disabled={isViewer || updating}
+                  value={tempStatus}
+                  onChange={(e) => setTempStatus(e.target.value)}
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+                >
+                  <option value="new">NEW</option>
+                  <option value="in_review">IN REVIEW</option>
+                  <option value="escalated">ESCALATED</option>
+                  <option value="closed">CLOSED</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider mb-2">Change Severity</label>
+                <select
+                  disabled={isViewer || updating}
+                  value={tempSeverity}
+                  onChange={(e) => setTempSeverity(e.target.value)}
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+                >
+                  <option value="low">LOW</option>
+                  <option value="medium">MEDIUM</option>
+                  <option value="high">HIGH</option>
+                  <option value="critical">CRITICAL</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider mb-2">Change Severity</label>
-              <select
-                disabled={isViewer || updating}
-                value={alert.severity}
-                onChange={(e) => handleUpdate('severity', e.target.value)}
-                className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
-              >
-                <option value="low">LOW</option>
-                <option value="medium">MEDIUM</option>
-                <option value="high">HIGH</option>
-                <option value="critical">CRITICAL</option>
-              </select>
-            </div>
+
+            {/* Staged Apply Button */}
+            {!isViewer && (tempStatus !== alert.status || tempSeverity !== alert.severity) && (
+              <div className="flex justify-end pt-1">
+                <Button
+                  onClick={handleSaveChanges}
+                  disabled={updating}
+                  variant="primary"
+                  size="sm"
+                  className="font-mono text-[9px] uppercase px-3 py-1.5"
+                >
+                  {updating ? 'Applying...' : 'Apply Status/Severity Changes'}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Raw Log payload */}
