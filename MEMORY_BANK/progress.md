@@ -2,8 +2,8 @@
 
 ## Phase 1: Foundation — Auth + DB schema + Dashboard skeleton
 - [x] Initialize project scaffolding and MEMORY_BANK
-- [ ] Set up Docker configuration (docker-compose, Dockerfiles)
-- [ ] Define PostgreSQL DB schema using SQLAlchemy
+- [/] Set up Docker configuration (docker-compose + backend Dockerfile done, frontend pending)
+- [x] Define PostgreSQL DB schema using SQLAlchemy & generate migrations
 - [ ] Implement JWT authentication (Flask-JWT-Extended)
 - [ ] Create basic React dashboard skeleton
 
