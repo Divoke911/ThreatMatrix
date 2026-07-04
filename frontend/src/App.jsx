@@ -4,14 +4,9 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import AlertsPage from './pages/AlertsPage';
+import IncidentsPage from './pages/IncidentsPage';
+import IncidentDetailsPage from './pages/IncidentDetailsPage';
 import Layout from './components/Layout';
-
-const IncidentsPage = () => (
-  <div className="space-y-4">
-    <h1 className="text-2xl font-bold tracking-tight">Incident Management</h1>
-    <p className="text-sm font-mono text-text-secondary">Incident orchestration dashboard skeleton. Phase 2 implementation target.</p>
-  </div>
-);
 
 const UsersPage = () => (
   <div className="space-y-4">
@@ -73,6 +68,11 @@ function App() {
           <Route path="/incidents" element={
             <ProtectedRoute>
               <IncidentsPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/incidents/:id" element={
+            <ProtectedRoute>
+              <IncidentDetailsPage />
             </ProtectedRoute>
           } />
           <Route path="/users" element={

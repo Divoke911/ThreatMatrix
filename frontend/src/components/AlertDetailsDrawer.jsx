@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import Badge from './Badge';
 import Button from './Button';
-import { X, ShieldAlert, Terminal, Link2, Sparkles } from 'lucide-react';
+import CreateIncidentModal from './CreateIncidentModal';
+import { X, ShieldAlert, Terminal, Link2, Sparkles, Link as LinkIcon } from 'lucide-react';
 
 const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   const [alert, setAlert] = useState(null);
@@ -13,6 +14,13 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   // Staged states for status and severity updates
   const [tempStatus, setTempStatus] = useState('');
   const [tempSeverity, setTempSeverity] = useState('');
+
+  // Linking & creation states
+  const [isLinking, setIsLinking] = useState(false);
+  const [activeIncidents, setActiveIncidents] = useState([]);
+  const [targetIncidentId, setTargetIncidentId] = useState('');
+  const [linkingLoading, setLinkingLoading] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const isViewer = userRole === 'viewer';
 
@@ -60,6 +68,44 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const handleStartLink = async () => {
+    setIsLinking(true);
+    try {
+      const resp = await api.get('/incidents', { params: { status: 'open,investigating', limit: 100 } });
+      setActiveIncidents(resp.data.incidents);
+    } catch (err) {
+      console.error("Failed to load active incidents", err);
+    }
+  };
+
+  const handleConfirmLink = async () => {
+    if (!targetIncidentId) return;
+    setLinkingLoading(true);
+    try {
+      await api.post(`/incidents/${targetIncidentId}/alerts`, { alert_ids: [alertId] });
+      setIsLinking(false);
+      
+      // Reload drawer details
+      const resp = await api.get(`/alerts/${alertId}`);
+      setAlert(resp.data);
+      if (onAlertUpdated) {
+        onAlertUpdated(resp.data);
+      }
+    } catch (err) {
+      console.error("Failed to link alert", err);
+      alert("Failed to link alert to incident.");
+    } finally {
+      setLinkingLoading(false);
+    }
+  };
+
+  const handleCreated = (newIncident) => {
+    if (onAlertUpdated) {
+      onAlertUpdated({ id: alertId, status: 'escalated' });
+    }
+    onClose();
   };
 
   if (!alertId) return null;
@@ -268,24 +314,59 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
 
           {/* Escalations Footer */}
           <div className="pt-4 border-t border-dark-border flex flex-col gap-3">
-            <div className="flex gap-3">
-              <Button 
-                variant="secondary" 
-                disabled 
-                className="flex-1 font-mono text-[10px] uppercase cursor-not-allowed"
-                title="Incident linking is locked in Phase 2a"
-              >
-                Link Incident
-              </Button>
-              <Button 
-                variant="outline" 
-                disabled 
-                className="flex-1 font-mono text-[10px] uppercase cursor-not-allowed"
-                title="Incident creation is locked in Phase 2a"
-              >
-                Create Incident
-              </Button>
-            </div>
+            {isLinking ? (
+              <div className="p-3 bg-dark-base border border-dark-border rounded space-y-3">
+                <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider">Select Target Incident</label>
+                <select
+                  value={targetIncidentId}
+                  onChange={(e) => setTargetIncidentId(e.target.value)}
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+                >
+                  <option value="">-- SELECT ACTIVE TICKET --</option>
+                  {activeIncidents.map(inc => (
+                    <option key={inc.id} value={inc.id}>{inc.title} ({inc.status.toUpperCase()})</option>
+                  ))}
+                </select>
+                <div className="flex gap-2 justify-end">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setIsLinking(false)}
+                    className="font-mono text-[9px] uppercase px-2.5 py-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    variant="primary" 
+                    size="sm" 
+                    disabled={!targetIncidentId || linkingLoading}
+                    onClick={handleConfirmLink}
+                    className="font-mono text-[9px] uppercase px-2.5 py-1"
+                  >
+                    {linkingLoading ? 'Linking...' : 'Confirm Link'}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <Button 
+                  variant="secondary" 
+                  disabled={isViewer || isClosed}
+                  onClick={handleStartLink}
+                  className="flex-1 font-mono text-[10px] uppercase disabled:opacity-40"
+                >
+                  Link Incident
+                </Button>
+                <Button 
+                  variant="outline" 
+                  disabled={isViewer || isClosed}
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="flex-1 font-mono text-[10px] uppercase disabled:opacity-40"
+                >
+                  Create Incident
+                </Button>
+              </div>
+            )}
             <Button
               variant="primary"
               disabled
@@ -298,6 +379,14 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
 
         </div>
       )}
+
+      {/* Create Incident Modal */}
+      <CreateIncidentModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onCreated={handleCreated}
+        preLinkedAlerts={alert ? [alert] : []}
+      />
     </div>
   );
 };
