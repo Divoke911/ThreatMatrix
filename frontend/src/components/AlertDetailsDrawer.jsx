@@ -23,6 +23,7 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const isViewer = userRole === 'viewer';
+  const isClosed = alert?.status === 'closed';
 
   useEffect(() => {
     if (!alertId) return;
@@ -323,8 +324,8 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                   className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
                 >
                   <option value="">-- SELECT ACTIVE TICKET --</option>
-                  {activeIncidents.map(inc => (
-                    <option key={inc.id} value={inc.id}>{inc.title} ({inc.status.toUpperCase()})</option>
+                  {Array.isArray(activeIncidents) && activeIncidents.map(inc => (
+                    <option key={inc.id} value={inc.id}>{inc.title} ({(inc.status || '').toUpperCase()})</option>
                   ))}
                 </select>
                 <div className="flex gap-2 justify-end">
