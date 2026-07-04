@@ -8,17 +8,19 @@
 - [x] Create basic React dashboard skeleton
 
 ## Phase 2: Core SOC Workflow
-- [ ] Implement Alert monitoring dashboard
-- [ ] Build Incident management views
-- [ ] Enable role-based access control enforcement
+- [x] Implement Alert monitoring dashboard (filters, pagination, overrides)
+- [x] Build Incident management views (TIMELINES, modal creations, unlinking)
+- [x] Enable role-based access control enforcement (Viewer checks, Closed incident soft-locks)
+- [x] Integrate SOC Dashboard telemetry metrics charts (Recharts volume trend line/donut/bars, 7D/30D filter)
 
 ## Phase 3: AI Analyst
-- [ ] Integrate server-side LLM API
-- [ ] Implement JSON schema validation for AI outputs
-- [ ] Display AI insights (explanations, MITRE ATT&CK, recommendations) on frontend
+- [x] Integrate server-side Groq LLM API (OpenAI SDK + env keys setup)
+- [x] Implement JSON schema validation and retry checks for AI outputs
+- [x] Display AI insights (explanations, MITRE ATT&CK, recommendations, log summary) on drawer
+- [x] Implement dynamic drawer reload, caching, and manual "Force Refresh" overrides
 
-## Phase 4: Packaging
-- [ ] Polish UI/UX and styling
-- [ ] Seed final synthetic data
-- [ ] Finalize documentation and deployment instructions
-- [ ] TODO: remove test-only auth endpoints before final packaging
+## Phase 4: Packaging & Polish
+- [ ] Upgrade User Administration page (frontend page UI + backend admin-only CRUD routes)
+- [ ] Upgrade Console Settings page (profile settings edits, password rotation)
+- [ ] Polish UI/UX layout styles and aesthetics
+- [ ] TODO: remove test-only auth endpoints before final packaging (`/test-admin`, `/test-analyst`, `/test-viewer`)

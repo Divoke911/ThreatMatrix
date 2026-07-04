@@ -1,17 +1,20 @@
 # Active Context
 
 ## Current Phase
-**Phase 2: Core SOC Workflow**
+**Phase 4: Packaging & Polish**
 
 ## Current Focus
-- Implementing the Alert monitoring dashboard on the frontend (listing alerts with pagination, filters, and severity overrides).
-- Building the Incident management views (incident creation from alerts, analyst assignment, and event timelines).
+- Implementing User Administration views on the frontend and `/api/users` REST endpoints on the backend (Admin only).
+- Implementing Console Settings panel on the frontend and `/api/settings` REST endpoints on the backend (profile edit, password change).
+- Removing temporary test-only auth endpoints (`/test-admin`, `/test-analyst`, `/test-viewer`) from the backend routes.
+- Executing final UI polish and writing staging demo verification scripts.
 
 ## Recent Changes
-- Completed Phase 1 (Foundation):
-  - Initialized React application with Vite, configured Tailwind v3.4 design tokens (cybersecurity dark aesthetic), and base layouts (collapsible Sidebar + Topbar).
-  - Built core UI components: Card (glassmorphism), Badge (severity coloring/glow), Button (hover effects).
-  - Set up authentication services on frontend: `api.js` (Axios interceptor with automatic token refreshing) and `AuthContext.jsx` (session state management).
-  - Created Login page with dark theme matching security credentials verification.
-  - Formulated protected routing and layout rendering rules.
-  - Successfully built and executed the entire stack (`db`, `backend`, `frontend`) in Docker. Verified frontend production compile (`npm run build`) succeeded without errors.
+- **Completed Phase 3 (AI Analyst Module)**:
+  - Integrated Groq API completions securely on the backend (via `OpenAI` client) using `.env` settings (`GROQ_API_KEY`, `GROQ_MODEL=llama-3.3-70b-versatile`).
+  - Created `POST /api/alerts/<id>/ai-analysis` supporting schema-validated JSON completions. Generates 4 separate `AIReport` types (`explanation`, `mitre_mapping`, `recommendation`, `log_summary`) and handles api timeouts/validation retries gracefully.
+  - Activated the "Run AI Analyst Agent" trigger inside the alerts drawer on the frontend with custom loaders, error retry panels, and `onAlertUpdated` dynamic arguments.
+  - Enabled "Force Refresh" overrides to query Groq on demand, else loading cached insights.
+- **Completed Phase 2 (Core SOC Workflow)**:
+  - Implemented Alerts triaging (filters, overrides, drawer) and Incident Management (Registry, assignments, timelines, soft-locks on closed incidents).
+  - Built the interactive dark-themed SOC Dashboard with live Recharts visualizations (Area Trend with 7D/30D filters, Ingestion Donut, Workload Bar) and side-by-side recent ingestion lists.
