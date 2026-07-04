@@ -2,10 +2,10 @@
 
 ## Phase 1: Foundation — Auth + DB schema + Dashboard skeleton
 - [x] Initialize project scaffolding and MEMORY_BANK
-- [/] Set up Docker configuration (docker-compose + backend Dockerfile done, frontend pending)
+- [x] Set up Docker configuration (docker-compose + backend & frontend Dockerfiles done)
 - [x] Define PostgreSQL DB schema using SQLAlchemy & generate migrations
 - [x] Implement JWT authentication (Flask-JWT-Extended)
-- [ ] Create basic React dashboard skeleton
+- [x] Create basic React dashboard skeleton
 
 ## Phase 2: Core SOC Workflow
 - [ ] Implement Alert monitoring dashboard
@@ -22,4 +22,3 @@
 - [ ] Seed final synthetic data
 - [ ] Finalize documentation and deployment instructions
 - [ ] TODO: remove test-only auth endpoints before final packaging
-

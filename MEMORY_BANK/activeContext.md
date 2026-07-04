@@ -1,21 +1,17 @@
 # Active Context
 
 ## Current Phase
-**Phase 1: Foundation — Auth + DB schema + Dashboard skeleton**
+**Phase 2: Core SOC Workflow**
 
 ## Current Focus
-- React frontend project initialization and creating the basic Dashboard skeleton.
-- Finalizing the remaining Docker configuration for the frontend service.
+- Implementing the Alert monitoring dashboard on the frontend (listing alerts with pagination, filters, and severity overrides).
+- Building the Incident management views (incident creation from alerts, analyst assignment, and event timelines).
 
 ## Recent Changes
-- Implemented full JWT authentication and RBAC backend module:
-  - Added password hashing/verification utilities to the `User` model using `bcrypt`.
-  - Added `TokenBlacklist` table and integrated full token invalidation for both access and refresh tokens on logout.
-  - Implemented `@role_required` decorator that extracts role claims directly from JWT payload without database lookups.
-  - Added endpoints `/api/auth/login` (generic errors), `/api/auth/logout`, `/api/auth/refresh`.
-  - Added and applied migrations for the new `token_blacklist` table in the PostgreSQL Docker service.
-  - Created a comprehensive integration test suite `test_auth_flow.py` and successfully ran it inside the backend Docker container (all tests passed!).
-- Implemented database seeding engine (`flask seed-db` CLI command):
-  - Idempotent cleanup of old rows in correct database constraint order.
-  - Generates 8 users, 750 raw logs, 250 alerts, 40 incidents, chronologically consistent timeline audits, and 8 pre-seeded AI reports.
-  - Prints a credential log summary at completion.
+- Completed Phase 1 (Foundation):
+  - Initialized React application with Vite, configured Tailwind v3.4 design tokens (cybersecurity dark aesthetic), and base layouts (collapsible Sidebar + Topbar).
+  - Built core UI components: Card (glassmorphism), Badge (severity coloring/glow), Button (hover effects).
+  - Set up authentication services on frontend: `api.js` (Axios interceptor with automatic token refreshing) and `AuthContext.jsx` (session state management).
+  - Created Login page with dark theme matching security credentials verification.
+  - Formulated protected routing and layout rendering rules.
+  - Successfully built and executed the entire stack (`db`, `backend`, `frontend`) in Docker. Verified frontend production compile (`npm run build`) succeeded without errors.
