@@ -21,3 +21,5 @@
 - [ ] Polish UI/UX and styling
 - [ ] Seed final synthetic data
 - [ ] Finalize documentation and deployment instructions
+- [ ] TODO: remove test-only auth endpoints before final packaging
+
