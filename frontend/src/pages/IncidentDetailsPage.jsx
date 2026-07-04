@@ -13,7 +13,7 @@ import {
   Terminal,
   X,
   MessageSquare,
-  Link,
+  Link as LinkIcon,
   Sparkles,
   ArrowLeft,
   Lock,
@@ -156,7 +156,7 @@ const IncidentDetailsPage = () => {
 
   // Consolidate AI Recommendations from linked alerts
   const consolidatedRecommendations = [];
-  incident.alerts.forEach(alert => {
+  (incident?.alerts || []).forEach(alert => {
     // If we have AI reports in this fetched object (or we map reports during fetching details)
     // Actually, we can fetch AI reports details if we want, but since they are loaded inside raw alerts or reports,
     // let's look for recommendation steps. In our seed, AI reports have type 'recommendation'
@@ -218,8 +218,8 @@ const IncidentDetailsPage = () => {
                   className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <option value="">UNASSIGNED</option>
-                  {analysts.map(a => (
-                    <option key={a.id} value={a.id}>{a.name} ({a.role.toUpperCase()})</option>
+                  {Array.isArray(analysts) && analysts.map(a => (
+                    <option key={a.id} value={a.id}>{a.name} ({(a.role || '').toUpperCase()})</option>
                   ))}
                 </select>
               </div>
@@ -278,18 +278,18 @@ const IncidentDetailsPage = () => {
         {/* Right Column: Linked Alerts */}
         <div className="space-y-6">
           <Card className="space-y-4 bg-dark-panel/40 border border-dark-border">
-            <h3 className="text-xs font-mono text-text-secondary uppercase tracking-widest border-b border-dark-border pb-2 flex items-center space-x-1.5">
-              <Link size={12} className="text-accent-cyan" />
-              <span>Correlated alerts ({incident.alerts.length})</span>
+             <h3 className="text-xs font-mono text-text-secondary uppercase tracking-widest border-b border-dark-border pb-2 flex items-center space-x-1.5">
+              <LinkIcon size={12} className="text-accent-cyan" />
+              <span>Correlated alerts ({(incident?.alerts?.length || 0)})</span>
             </h3>
 
-            {incident.alerts.length === 0 ? (
+            {(incident?.alerts?.length || 0) === 0 ? (
               <div className="text-xs font-mono text-text-secondary p-4 bg-dark-hover/15 rounded border border-dashed border-dark-border text-center">
                 NO LINKED SECURITY ALERTS
               </div>
             ) : (
               <div className="space-y-3.5 max-h-96 overflow-y-auto pr-1 scrollbar-thin">
-                {incident.alerts.map(alert => (
+                {Array.isArray(incident?.alerts) && incident.alerts.map(alert => (
                   <div 
                     key={alert.id}
                     className="p-3 bg-dark-base border border-dark-border rounded flex flex-col justify-between hover:border-accent-cyan/40 transition-colors"
@@ -300,7 +300,7 @@ const IncidentDetailsPage = () => {
                     >
                       <div className="flex items-center justify-between mb-1.5">
                         <Badge variant={alert.severity}>{alert.severity}</Badge>
-                        <span className="text-[9px] font-mono text-text-secondary">{alert.source.toUpperCase()}</span>
+                        <span className="text-[9px] font-mono text-text-secondary">{(alert.source || '').toUpperCase()}</span>
                       </div>
                       <h4 className="text-xs font-semibold text-text-primary hover:text-accent-cyan transition-colors truncate">
                         {alert.title}
@@ -352,11 +352,15 @@ const IncidentDetailsPage = () => {
 
         {/* Timeline Trails */}
         <div className="relative border-l border-dark-border pl-6 ml-3 space-y-6">
-          {incident.timeline.map((event) => {
+          {Array.isArray(incident?.timeline) && incident.timeline.map((event) => {
             const isNote = event.event_type === 'note_added';
             const isCreated = event.event_type === 'created';
             const isStatus = event.event_type === 'status_change';
             const isAssign = event.event_type === 'assignment_change';
+
+            const eventMessage = typeof event.detail === 'string'
+              ? event.detail
+              : (event.detail?.message || event.detail?.note || '');
 
             return (
               <div key={event.id} className="relative">
@@ -376,7 +380,7 @@ const IncidentDetailsPage = () => {
                   <div className="text-xs text-text-primary font-sans leading-relaxed">
                     {/* Render message depending on details */}
                     <p className={isNote ? 'text-text-secondary italic' : 'font-semibold text-text-primary'}>
-                      {event.detail?.message || event.detail?.note}
+                      {eventMessage}
                     </p>
                     {isNote && event.detail?.note && (
                       <p className="mt-1.5 p-3 rounded bg-dark-base/50 border border-dark-border/40 text-text-primary font-mono text-xs whitespace-pre-wrap">
