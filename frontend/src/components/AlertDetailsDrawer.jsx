@@ -37,6 +37,7 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
       setAlert(resp.data);
       setTempStatus(resp.data.status);
       setTempSeverity(resp.data.severity);
+      return resp.data;
     } catch (err) {
       setError('Failed to load alert payload details.');
       console.error(err);
@@ -57,9 +58,9 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
       await api.post(`/alerts/${alertId}/ai-analysis`, null, {
         params: { force_refresh: force }
       });
-      await fetchAlertDetails();
-      if (onAlertUpdated) {
-        onAlertUpdated();
+      const freshData = await fetchAlertDetails();
+      if (onAlertUpdated && freshData) {
+        onAlertUpdated(freshData);
       }
     } catch (err) {
       const errMsg = err.response?.data?.error || err.response?.data?.msg || 'AI Agent failed to respond.';
