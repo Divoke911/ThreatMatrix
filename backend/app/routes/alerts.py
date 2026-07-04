@@ -203,7 +203,7 @@ def update_alert(alert_id):
 
 @alerts_bp.route('/<uuid:alert_id>/ai-analysis', methods=['POST'])
 @jwt_required()
-@role_required(['admin', 'analyst'])
+@role_required('admin', 'analyst')
 def trigger_ai_analysis(alert_id):
     import os
     import json
