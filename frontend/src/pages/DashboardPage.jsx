@@ -1,44 +1,398 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import api from '../services/api';
 import Card from '../components/Card';
 import Badge from '../components/Badge';
 import Button from '../components/Button';
+import AlertDetailsDrawer from '../components/AlertDetailsDrawer';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar
+} from 'recharts';
+import {
+  Activity,
+  ShieldAlert,
+  Server,
+  Database,
+  Cpu,
+  RefreshCw,
+  Clock,
+  ArrowRight,
+  TrendingUp,
+  FileSpreadsheet
+} from 'lucide-react';
 
 const DashboardPage = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [stats, setStats] = useState(null);
+  const [days, setDays] = useState(7);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Staged select alert id for drawer popup
+  const [selectedAlertId, setSelectedAlertId] = useState(null);
+
+  const fetchDashboardStats = async (lookbackDays = days) => {
+    try {
+      const resp = await api.get('/dashboard/stats', { params: { days: lookbackDays } });
+      setStats(resp.data);
+    } catch (err) {
+      setError('Failed to fetch Security Operations statistics.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardStats(days);
+  }, [days]);
+
+  const handleReload = () => {
+    setRefreshing(true);
+    fetchDashboardStats(days);
+  };
+
+  const handleToggleDays = (val) => {
+    setDays(val);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+        Loading System Telemetry Ingestions...
+      </div>
+    );
+  }
+
+  if (error || !stats) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center p-6 text-center text-xs font-mono text-severity-critical">
+        {error || 'Telemetry parameters not resolved.'}
+      </div>
+    );
+  }
+
+  const userRoleStr = user?.role?.value || user?.role || 'viewer';
+
+  // Cyber styling colors mapping
+  const sourceColors = {
+    firewall: '#06b6d4',  // Cyan
+    ids: '#ff9d3d',       // Orange
+    endpoint: '#e3b341',  // Yellow
+    auth: '#a855f7'       // Purple
+  };
+
+  // Convert source_distribution counts dict to Recharts Pie list
+  const pieData = Object.keys(stats.source_distribution || {}).map(src => ({
+    name: src.toUpperCase(),
+    value: stats.source_distribution[src],
+    color: sourceColors[src] || '#58a6ff'
+  }));
+
+  // Convert incident_status_breakdown to Recharts Bar list
+  const barData = [
+    { name: 'OPEN', count: stats.incident_status_breakdown?.open || 0, fill: '#ef4444' },
+    { name: 'INVESTIGATING', count: stats.incident_status_breakdown?.investigating || 0, fill: '#f59e0b' },
+    { name: 'RESOLVED', count: stats.incident_status_breakdown?.resolved || 0, fill: '#10b981' },
+    { name: 'CLOSED', count: stats.incident_status_breakdown?.closed || 0, fill: '#6b7280' }
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Security Operations Center Dashboard</h1>
-        <Badge variant="closed">DEMO ACTIVE</Badge>
-      </div>
-
-      {/* Basic Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card hoverGlow>
-          <h3 className="text-xs font-mono text-text-secondary uppercase mb-2">System Integrity</h3>
-          <p className="text-2xl font-semibold text-emerald-400">OPERATIONAL</p>
-        </Card>
-        <Card hoverGlow>
-          <h3 className="text-xs font-mono text-text-secondary uppercase mb-2">Seeded Log Entries</h3>
-          <p className="text-2xl font-semibold text-accent-cyan">750 Logs Loaded</p>
-        </Card>
-        <Card hoverGlow>
-          <h3 className="text-xs font-mono text-text-secondary uppercase mb-2">Escalated Tickets</h3>
-          <p className="text-2xl font-semibold text-severity-critical shadow-glow-critical inline-block px-1">40 Active</p>
-        </Card>
-      </div>
-
-      {/* Skeleton Frame Panel */}
-      <Card className="h-64 flex items-center justify-center text-center">
-        <div className="space-y-3 p-4">
-          <p className="text-sm text-text-secondary font-mono max-w-lg">
-            Dashboard metrics and trend charts will be initialized here in Phase 2. Core database tables and login credentials are fully validated and running.
+      {/* Top Header: Title & System Health Checks */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-dark-border pb-4">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-text-primary uppercase font-mono">
+            Security Operations Center (SOC) Console
+          </h1>
+          <p className="text-xs text-text-secondary font-mono mt-1">
+            Active session monitor: {user?.name || 'Analyst'} ({(userRoleStr).toUpperCase()})
           </p>
-          <div className="flex justify-center space-x-3">
-            <Button variant="outline" size="sm">System Configuration</Button>
-            <Button variant="primary" size="sm">Launch Analyst Console</Button>
-          </div>
         </div>
-      </Card>
+        
+        {/* System Health Indicators */}
+        <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 bg-dark-panel/40 border border-dark-border px-3 py-1.5 rounded text-[10px] font-mono">
+            <span className="text-text-secondary uppercase">Health Status:</span>
+            <div className="flex items-center space-x-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-400">API</span>
+            </div>
+            <div className="flex items-center space-x-1 border-l border-dark-border pl-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-400">DB</span>
+            </div>
+            <div className="flex items-center space-x-1 border-l border-dark-border pl-2.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-400">AI AGENT</span>
+            </div>
+          </div>
+          <Button variant="secondary" size="sm" onClick={handleReload} disabled={refreshing} className="font-mono text-xs uppercase h-8">
+            <RefreshCw size={13} className={`mr-1 ${refreshing ? 'animate-spin' : ''}`} /> Reload
+          </Button>
+        </div>
+      </div>
+
+      {/* KPI Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card hoverGlow>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider">Ingested Log Streams</span>
+            <Server size={14} className="text-accent-cyan" />
+          </div>
+          <p className="text-2xl font-bold text-text-primary mt-1.5 font-mono">{stats.total_logs}</p>
+        </Card>
+
+        <Card hoverGlow>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider">Correlated Alerts</span>
+            <ShieldAlert size={14} className="text-severity-critical" />
+          </div>
+          <p className="text-2xl font-bold text-severity-critical mt-1.5 font-mono">{stats.total_alerts}</p>
+        </Card>
+
+        <Card hoverGlow>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider">Active Incident Response</span>
+            <Activity size={14} className="text-amber-500" />
+          </div>
+          <p className="text-2xl font-bold text-amber-500 mt-1.5 font-mono">{stats.active_incidents}</p>
+        </Card>
+
+        <Card hoverGlow>
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider">Resolved Tickets</span>
+            <Database size={14} className="text-emerald-400" />
+          </div>
+          <p className="text-2xl font-bold text-emerald-400 mt-1.5 font-mono">{stats.resolved_incidents}</p>
+        </Card>
+      </div>
+
+      {/* Charts Workspace Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Alerts Trend Time Series Line/Area */}
+        <Card className="lg:col-span-2 p-5 bg-dark-panel/40 border border-dark-border flex flex-col justify-between">
+          <div className="flex items-center justify-between border-b border-dark-border/40 pb-3 mb-4">
+            <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest flex items-center gap-1.5">
+              <TrendingUp size={14} className="text-accent-cyan" />
+              <span>Log Ingestion Volume Trend</span>
+            </h3>
+            
+            {/* Days Toggle */}
+            <div className="flex bg-dark-base border border-dark-border rounded p-0.5 font-mono text-[9px] font-semibold">
+              <button 
+                onClick={() => handleToggleDays(7)}
+                className={`px-2 py-0.5 rounded transition-colors uppercase ${days === 7 ? 'bg-accent-cyan text-dark-base font-bold' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                7D
+              </button>
+              <button 
+                onClick={() => handleToggleDays(30)}
+                className={`px-2 py-0.5 rounded transition-colors uppercase ${days === 30 ? 'bg-accent-cyan text-dark-base font-bold' : 'text-text-secondary hover:text-text-primary'}`}
+              >
+                30D
+              </button>
+            </div>
+          </div>
+
+          <div className="h-60 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.alerts_trend || []} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="alertGlow" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#161b22" opacity={0.3} />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#8b949e" 
+                  tickFormatter={(val) => val.substring(5)} 
+                  tick={{ fontSize: 9, fontFamily: 'monospace' }}
+                />
+                <YAxis stroke="#8b949e" tick={{ fontSize: 9, fontFamily: 'monospace' }} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }} 
+                  labelClassName="text-accent-cyan font-bold"
+                />
+                <Area type="monotone" dataKey="count" name="Alerts" stroke="#06b6d4" strokeWidth={1.5} fillOpacity={1} fill="url(#url(#alertGlow))" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Ingestion Source Distribution Donut Pie Chart */}
+        <Card className="p-5 bg-dark-panel/40 border border-dark-border flex flex-col justify-between">
+          <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest border-b border-dark-border/40 pb-3 mb-4">
+            Ingested Log Sources
+          </h3>
+          <div className="h-44 w-full flex items-center justify-center relative">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={50}
+                  outerRadius={70}
+                  paddingAngle={4}
+                  dataKey="value"
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-[10px] font-mono text-text-secondary uppercase">Total Sources</span>
+              <span className="text-lg font-bold font-mono text-text-primary">{pieData.length}</span>
+            </div>
+          </div>
+
+          {/* Custom Labels List */}
+          <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-text-secondary pt-2">
+            {pieData.map(d => (
+              <div key={d.name} className="flex items-center space-x-1.5">
+                <span className="w-2 h-2 rounded-sm" style={{ backgroundColor: d.color }} />
+                <span className="truncate">{d.name} ({d.value})</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Incidents lifecycle workload bar chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-1 p-5 bg-dark-panel/40 border border-dark-border">
+          <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest border-b border-dark-border/40 pb-3 mb-4">
+            Incident Workload Overview
+          </h3>
+          <div className="h-56 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#161b22" opacity={0.3} />
+                <XAxis dataKey="name" stroke="#8b949e" tick={{ fontSize: 7, fontFamily: 'monospace' }} />
+                <YAxis stroke="#8b949e" tick={{ fontSize: 9, fontFamily: 'monospace' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }}
+                />
+                <Bar dataKey="count" name="Incidents" radius={[2, 2, 0, 0]}>
+                  {barData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Split feeds panel: 5 recent alerts & 5 recent incidents */}
+        <Card className="lg:col-span-2 p-5 bg-dark-panel/40 border border-dark-border space-y-4">
+          <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest border-b border-dark-border/40 pb-3 flex items-center justify-between">
+            <span>Recent Threat Activities Ingestions</span>
+            <Clock size={13} className="text-accent-cyan animate-pulse" />
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* 5 Recent Alerts */}
+            <div className="space-y-2.5">
+              <span className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1 flex items-center justify-between">
+                <span>Latest Log Alerts</span>
+                <span className="text-severity-critical">● Ingested</span>
+              </span>
+              
+              {stats.recent_alerts?.length === 0 ? (
+                <div className="p-4 rounded border border-dashed border-dark-border text-center text-[10px] text-text-secondary font-mono">
+                  NO ALERTS INGESTED
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {stats.recent_alerts?.map(alert => (
+                    <div 
+                      key={alert.id}
+                      onClick={() => setSelectedAlertId(alert.id)}
+                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-cyan/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-semibold text-text-primary truncate flex-1">{alert.title}</span>
+                        <Badge variant={alert.severity}>{alert.severity}</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] font-mono text-text-secondary">
+                        <span>SOURCE IP: {alert.source_ip || 'N/A'}</span>
+                        <span>{new Date(alert.created_at).toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 5 Recent Incidents */}
+            <div className="space-y-2.5">
+              <span className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1 flex items-center justify-between">
+                <span>Latest Incident Tickets</span>
+                <span className="text-accent-cyan">● Escalated</span>
+              </span>
+
+              {stats.recent_incidents?.length === 0 ? (
+                <div className="p-4 rounded border border-dashed border-dark-border text-center text-[10px] text-text-secondary font-mono">
+                  NO INCIDENTS ESCALATED
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {stats.recent_incidents?.map(inc => (
+                    <div 
+                      key={inc.id}
+                      onClick={() => navigate(`/incidents/${inc.id}`)}
+                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-cyan/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className="font-semibold text-text-primary truncate flex-1">{inc.title}</span>
+                        <Badge variant={inc.status}>{inc.status}</Badge>
+                      </div>
+                      <div className="flex items-center justify-between text-[9px] font-mono text-text-secondary">
+                        <span>OWNER: {inc.assignee_name}</span>
+                        <span>{new Date(inc.created_at).toLocaleTimeString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Slide-out details drawer overlay for recent alert inspection */}
+      {selectedAlertId && (
+        <AlertDetailsDrawer
+          alertId={selectedAlertId}
+          onClose={() => setSelectedAlertId(null)}
+          userRole={userRoleStr}
+          onAlertUpdated={handleReload} // Reload stats if status modified inside drawer
+        />
+      )}
     </div>
   );
 };
