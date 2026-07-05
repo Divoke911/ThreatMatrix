@@ -33,8 +33,8 @@ const AlertsPage = () => {
   // Selected Alert for Details Drawer
   const [selectedAlertId, setSelectedAlertId] = useState(null);
 
-  const fetchAlerts = async () => {
-    setLoading(true);
+  const fetchAlerts = async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const params = {
         page,
@@ -53,13 +53,20 @@ const AlertsPage = () => {
     } catch (err) {
       console.error("Failed to query alerts", err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchAlerts();
-  }, [page, severity, status, source, sort]);
+
+    // Silent background updates polling every 15 seconds
+    const interval = setInterval(() => {
+      fetchAlerts(true);
+    }, 15000);
+
+    return () => clearInterval(interval);
+  }, [page, severity, status, source, sort, search]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();

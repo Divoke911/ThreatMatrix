@@ -16,6 +16,7 @@ def main():
     print("ThreatMatrix Authentication, Authorization & Operations Validation Suite\n")
     run_script("test_users_endpoints.py")
     run_script("test_settings_endpoints.py")
+    run_script("test_simulation.py")
     print("\n============================================================")
     print(" 🎉 ALL STACK SYSTEM INTEGRATION TESTS COMPLETED SUCCESSFULLY!")
     print("============================================================")

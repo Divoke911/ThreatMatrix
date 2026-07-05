@@ -64,6 +64,9 @@ def create_app(config_class=Config):
     from app.routes.settings import settings_bp
     app.register_blueprint(settings_bp)
 
+    from app.routes.logs import logs_bp
+    app.register_blueprint(logs_bp)
+
 
     # Register CLI commands
     from app.commands import seed_db_command

@@ -42,30 +42,60 @@ const DashboardPage = () => {
   const [stats, setStats] = useState(null);
   const [days, setDays] = useState(7);
   const [refreshing, setRefreshing] = useState(false);
+  const [simulating, setSimulating] = useState(false);
 
   // Staged select alert id for drawer popup
   const [selectedAlertId, setSelectedAlertId] = useState(null);
 
-  const fetchDashboardStats = async (lookbackDays = days) => {
+  const fetchDashboardStats = async (lookbackDays = days, silent = false) => {
+    if (!silent) setError('');
     try {
       const resp = await api.get('/dashboard/stats', { params: { days: lookbackDays } });
       setStats(resp.data);
     } catch (err) {
-      setError('Failed to fetch Security Operations statistics.');
+      if (!silent) setError('Failed to fetch Security Operations statistics.');
       console.error(err);
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (!silent) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   };
 
   useEffect(() => {
     fetchDashboardStats(days);
+
+    // Silent background updates polling every 20 seconds
+    const interval = setInterval(() => {
+      fetchDashboardStats(days, true);
+    }, 20000);
+
+    return () => clearInterval(interval);
   }, [days]);
 
   const handleReload = () => {
     setRefreshing(true);
     fetchDashboardStats(days);
+  };
+
+  const handleSimulateTraffic = async () => {
+    setSimulating(true);
+    try {
+      const resp = await api.post('/logs/simulate');
+      const data = resp.data;
+      if (data.alert_triggered) {
+        alert(`🚨 Threat Simulated Successfully!\nLog Created: ${data.log_created.source.toUpperCase()}\nAlert Triggered: "${data.alert.title}" (Severity: ${data.alert.severity.toUpperCase()})`);
+      } else {
+        alert(`ℹ️ Traffic Log Ingested:\nSource: ${data.log_created.source.toUpperCase()}\nNo threat correlated.`);
+      }
+      fetchDashboardStats(days, true);
+    } catch (err) {
+      alert("Simulation failed: " + (err.response?.data?.msg || err.message));
+      console.error(err);
+    } finally {
+      setSimulating(false);
+    }
   };
 
   const handleToggleDays = (val) => {
@@ -143,6 +173,17 @@ const DashboardPage = () => {
               <span className="text-emerald-400">AI AGENT</span>
             </div>
           </div>
+          {userRoleStr === 'admin' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={handleSimulateTraffic}
+              disabled={simulating}
+              className="font-mono text-xs uppercase h-8 bg-accent-cyan/10 border border-accent-cyan text-accent-cyan hover:bg-accent-cyan/20 flex items-center"
+            >
+              <Activity size={13} className={`mr-1 ${simulating ? 'animate-pulse' : ''}`} /> Simulate Traffic
+            </Button>
+          )}
           <Button variant="secondary" size="sm" onClick={handleReload} disabled={refreshing} className="font-mono text-xs uppercase h-8">
             <RefreshCw size={13} className={`mr-1 ${refreshing ? 'animate-spin' : ''}`} /> Reload
           </Button>
