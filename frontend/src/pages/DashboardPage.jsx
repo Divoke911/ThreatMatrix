@@ -312,9 +312,10 @@ const DashboardPage = () => {
                   data={pieData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
+                  innerRadius={56}
                   outerRadius={70}
-                  paddingAngle={4}
+                  paddingAngle={6}
+                  cornerRadius={6}
                   dataKey="value"
                 >
                   {pieData.map((entry, index) => (
@@ -359,10 +360,12 @@ const DashboardPage = () => {
                 <Tooltip
                   contentStyle={{ backgroundColor: '#161616', borderColor: 'rgba(255,255,255,0.04)', color: '#ffffff', fontSize: 10, fontFamily: 'monospace', borderRadius: '12px' }}
                 />
-                <Bar dataKey="count" name="Incidents" radius={[4, 4, 0, 0]}>
-                  {barData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
+                <Bar dataKey="count" name="Incidents" radius={[999, 999, 999, 999]} barSize={12}>
+                  {barData.map((entry, index) => {
+                    const maxCount = Math.max(...barData.map(d => d.count), 1);
+                    const isMax = entry.count === maxCount && entry.count > 0;
+                    return <Cell key={`cell-${index}`} fill={isMax ? '#b3ff00' : '#262626'} />;
+                  })}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>

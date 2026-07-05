@@ -30,12 +30,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, userRole }) => {
       `}
     >
       {/* Brand Header */}
-      <div className="flex items-center justify-between p-4 border-b border-dark-border h-16">
+      <div className="flex items-center justify-between p-4 border-b border-white/[0.02] h-16">
         <div className="flex items-center space-x-3 overflow-hidden">
-          <Shield className="w-6 h-6 text-accent-lime flex-shrink-0" />
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+            <rect x="6" y="4" width="3.5" height="16" rx="1.5" transform="skewX(-15)" fill="#b3ff00" />
+            <rect x="12" y="4" width="3.5" height="16" rx="1.5" transform="skewX(-15)" fill="#b3ff00" />
+            <rect x="18" y="4" width="3.5" height="10" rx="1.5" transform="skewX(-15)" fill="#b3ff00" />
+          </svg>
           {!isCollapsed && (
-            <span className="font-mono font-bold text-lg tracking-wider text-accent-lime uppercase whitespace-nowrap">
-              ThreatMatrix
+            <span className="font-sans font-extrabold text-md tracking-widest text-white uppercase whitespace-nowrap">
+              Threat<span className="text-accent-lime">Matrix</span>
             </span>
           )}
         </div>
