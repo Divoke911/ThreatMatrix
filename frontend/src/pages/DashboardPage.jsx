@@ -43,6 +43,7 @@ const DashboardPage = () => {
   const [days, setDays] = useState(7);
   const [refreshing, setRefreshing] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  const [toast, setToast] = useState(null);
 
   // Staged select alert id for drawer popup
   const [selectedAlertId, setSelectedAlertId] = useState(null);
@@ -81,20 +82,40 @@ const DashboardPage = () => {
 
   const handleSimulateTraffic = async () => {
     setSimulating(true);
+    setToast(null);
     try {
       const resp = await api.post('/logs/simulate');
       const data = resp.data;
       if (data.alert_triggered) {
-        alert(`🚨 Threat Simulated Successfully!\nLog Created: ${data.log_created.source.toUpperCase()}\nAlert Triggered: "${data.alert.title}" (Severity: ${data.alert.severity.toUpperCase()})`);
+        setToast({
+          visible: true,
+          type: 'threat',
+          title: 'Threat Detected!',
+          msg: `Log: ${data.log_created.source.toUpperCase()} -> Alert: "${data.alert.title}" (Severity: ${data.alert.severity.toUpperCase()})`
+        });
       } else {
-        alert(`ℹ️ Traffic Log Ingested:\nSource: ${data.log_created.source.toUpperCase()}\nNo threat correlated.`);
+        setToast({
+          visible: true,
+          type: 'info',
+          title: 'Log Ingested',
+          msg: `Source: ${data.log_created.source.toUpperCase()}. No threat correlated.`
+        });
       }
       fetchDashboardStats(days, true);
     } catch (err) {
-      alert("Simulation failed: " + (err.response?.data?.msg || err.message));
+      const errMsg = err.response?.data?.msg || err.message || 'Simulation failed.';
+      setToast({
+        visible: true,
+        type: 'error',
+        title: 'Simulation Error',
+        msg: errMsg
+      });
       console.error(err);
     } finally {
       setSimulating(false);
+      setTimeout(() => {
+        setToast(prev => prev ? { ...prev, visible: false } : null);
+      }, 4000);
     }
   };
 
@@ -433,6 +454,45 @@ const DashboardPage = () => {
           userRole={userRoleStr}
           onAlertUpdated={handleReload} // Reload stats if status modified inside drawer
         />
+      )}
+
+      {/* Simulation Toast Notification */}
+      {toast && toast.visible && (
+        <div className={`fixed top-4 right-4 z-50 max-w-sm rounded border p-4 shadow-lg font-mono text-xs transition-all duration-300 ${
+          toast.type === 'threat'
+            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in'
+            : toast.type === 'error'
+            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in'
+            : 'bg-dark-panel/95 border-accent-cyan/50 text-text-primary animate-slide-in'
+        }`}
+        style={{
+          boxShadow: toast.type === 'threat'
+            ? '0 0 15px rgba(239, 68, 68, 0.25)'
+            : '0 0 15px rgba(6, 182, 212, 0.15)'
+        }}
+        >
+          <div className="flex items-start gap-2.5">
+            <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+              toast.type === 'threat' || toast.type === 'error'
+                ? 'bg-severity-critical animate-pulse'
+                : 'bg-accent-cyan animate-pulse'
+            }`} />
+            <div>
+              <h4 className="font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
+                <span>{toast.title}</span>
+                <button 
+                  onClick={() => setToast(prev => prev ? { ...prev, visible: false } : null)}
+                  className="text-[9px] text-text-secondary hover:text-text-primary ml-4"
+                >
+                  ✕
+                </button>
+              </h4>
+              <p className="text-[10px] text-text-secondary leading-relaxed">
+                {toast.msg}
+              </p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
