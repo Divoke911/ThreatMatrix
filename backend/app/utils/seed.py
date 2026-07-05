@@ -98,13 +98,9 @@ def seed_data():
     password = "password123"
     users_data = [
         {"name": "System Administrator", "email": "admin@threatmatrix.com", "role": "admin"},
-        {"name": "SOC Manager", "email": "admin2@threatmatrix.com", "role": "admin"},
         {"name": "Lead Analyst Alice", "email": "analyst1@threatmatrix.com", "role": "analyst"},
         {"name": "Analyst Bob", "email": "analyst2@threatmatrix.com", "role": "analyst"},
-        {"name": "Analyst Charlie", "email": "analyst3@threatmatrix.com", "role": "analyst"},
-        {"name": "Analyst David", "email": "analyst4@threatmatrix.com", "role": "analyst"},
-        {"name": "Viewer Officer Chief", "email": "viewer1@threatmatrix.com", "role": "viewer"},
-        {"name": "Viewer Auditor", "email": "viewer2@threatmatrix.com", "role": "viewer"}
+        {"name": "Viewer Officer Chief", "email": "viewer1@threatmatrix.com", "role": "viewer"}
     ]
     
     users = []

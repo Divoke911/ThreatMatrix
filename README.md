@@ -54,9 +54,9 @@ Open your browser and navigate to:
 | Name / Privilege | Email Address | Description |
 |---|---|---|
 | **System Administrator** | `admin@threatmatrix.com` | full control, adds users, edits roles |
-| **SOC Manager** | `admin2@threatmatrix.com` | full control, adds users, edits roles |
 | **Lead Analyst Alice** | `analyst1@threatmatrix.com` | triage threats, links incidents, timelines notes, runs AI |
-| **Viewer Auditor** | `viewer1@threatmatrix.com` | read-only dashboard tracking, cannot modify or run AI |
+| **Analyst Bob** | `analyst2@threatmatrix.com` | triage threats, links incidents, timelines notes, runs AI |
+| **Viewer Officer Chief** | `viewer1@threatmatrix.com` | read-only dashboard tracking, cannot modify or run AI |
 
 ---
 
