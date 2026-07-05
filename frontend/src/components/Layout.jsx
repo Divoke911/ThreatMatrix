@@ -11,6 +11,7 @@ import {
 const Layout = ({ children }) => {
   const { user, logout } = useContext(AuthContext);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const userRoleStr = user?.role?.value || user?.role || 'viewer';
 
   return (
     <div className="flex h-screen overflow-hidden bg-dark-base text-text-primary">
