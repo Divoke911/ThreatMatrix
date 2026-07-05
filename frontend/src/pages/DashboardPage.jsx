@@ -241,8 +241,8 @@ const DashboardPage = () => {
                 <AreaChart data={stats.alerts_trend || []} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="alertGlow" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#b3ff00" stopOpacity={0.25}/>
-                      <stop offset="95%" stopColor="#b3ff00" stopOpacity={0.0}/>
+                      <stop offset="5%" stopColor="#00bfff" stopOpacity={0.25}/>
+                      <stop offset="95%" stopColor="#00bfff" stopOpacity={0.0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#161b22" opacity={0.3} />
@@ -261,7 +261,7 @@ const DashboardPage = () => {
                     type="linear" 
                     dataKey="count" 
                     name="Ingested Events" 
-                    stroke="#b3ff00" 
+                    stroke="#00bfff" 
                     strokeWidth={2}
                     fillOpacity={1} 
                     fill="url(#alertGlow)" 
@@ -413,9 +413,9 @@ const DashboardPage = () => {
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                     <path className="text-[#1a1a1a]" strokeWidth="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path className="text-accent-lime" strokeDasharray="75, 100" strokeWidth="2.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path className="text-amber-500" strokeDasharray="75, 100" strokeWidth="2.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                   </svg>
-                  <div className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-white">
+                  <div className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-amber-500">
                     75%
                   </div>
                 </div>
@@ -427,9 +427,9 @@ const DashboardPage = () => {
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                     <path className="text-[#1a1a1a]" strokeWidth="2.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    <path className="text-accent-lime" strokeDasharray="98, 100" strokeWidth="2.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    <path className="text-cyan-400" strokeDasharray="98, 100" strokeWidth="2.5" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                   </svg>
-                  <div className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-white">
+                  <div className="absolute inset-0 flex items-center justify-center font-mono text-xs font-bold text-cyan-400">
                     4.9
                   </div>
                 </div>
