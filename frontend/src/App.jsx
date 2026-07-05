@@ -7,13 +7,7 @@ import AlertsPage from './pages/AlertsPage';
 import IncidentsPage from './pages/IncidentsPage';
 import IncidentDetailsPage from './pages/IncidentDetailsPage';
 import Layout from './components/Layout';
-
-const UsersPage = () => (
-  <div className="space-y-4">
-    <h1 className="text-2xl font-bold tracking-tight">User Administration</h1>
-    <p className="text-sm font-mono text-text-secondary">Admin user management console. Phase 4 implementation target.</p>
-  </div>
-);
+import UsersPage from './pages/UsersPage';
 
 const SettingsPage = () => (
   <div className="space-y-4">
