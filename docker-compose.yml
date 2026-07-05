@@ -5,12 +5,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    environment:
-      - REACT_APP_API_URL=http://localhost:5000/api
+      - "3000:80"  # Maps local host port 3000 to the container Nginx port 80
     depends_on:
       - backend
 
@@ -19,18 +14,16 @@ services:
       context: ./backend
     ports:
       - "5000:5000"
-    volumes:
-      - ./backend:/app
     environment:
       - FLASK_APP=run.py
-      - FLASK_ENV=development
+      - FLASK_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/threatmatrix
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key}
-      - LLM_API_KEY=${LLM_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-dev_secret_key_change_me}
       - GROQ_API_KEY=${GROQ_API_KEY}
       - GROQ_MODEL=${GROQ_MODEL:-llama-3.3-70b-versatile}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:15-alpine
@@ -42,6 +35,11 @@ services:
       - POSTGRES_DB=threatmatrix
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d threatmatrix"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:

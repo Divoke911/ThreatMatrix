@@ -20,7 +20,10 @@
 - [x] Implement dynamic drawer reload, caching, and manual "Force Refresh" overrides
 
 ## Phase 4: Packaging & Polish
-- [ ] Upgrade User Administration page (frontend page UI + backend admin-only CRUD routes)
-- [ ] Upgrade Console Settings page (profile settings edits, password rotation)
-- [ ] Polish UI/UX layout styles and aesthetics
-- [ ] TODO: remove test-only auth endpoints before final packaging (`/test-admin`, `/test-analyst`, `/test-viewer`)
+- [x] Upgrade User Administration page (frontend page UI + backend admin-only CRUD routes)
+- [x] Upgrade Console Settings page (profile settings edits, password rotation)
+- [x] Polish UI/UX layout styles and aesthetics
+- [x] Remove test-only auth endpoints before final packaging (`/test-admin`, `/test-analyst`, `/test-viewer`)
+- [x] Production Dockerization: serving backend via Gunicorn, multi-stage Node/Nginx static compile and reverse-proxying frontend
+- [x] Database healthcheck boot coordination waits
+- [x] Create root level setup guides, credentials references, and automated integration validation test runners
