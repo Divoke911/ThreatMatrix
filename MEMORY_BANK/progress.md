@@ -27,3 +27,13 @@
 - [x] Production Dockerization: serving backend via Gunicorn, multi-stage Node/Nginx static compile and reverse-proxying frontend
 - [x] Database healthcheck boot coordination waits
 - [x] Create root level setup guides, credentials references, and automated integration validation test runners
+
+## Phase 5: UI Redesign & Public Cloud Hosting
+- [x] Complete UI theme overhaul matching premium taxi-style dashboard layouts
+  - [x] Slanted rect neon lime brand logo
+  - [x] Pill search/profile header controls
+  - [x] Smooth laser-arc animated attack paths map
+  - [x] Sharp line AreaCharts (linear interpolation)
+  - [x] Amber and Cyan color balanced circular gauges (API capacity, Console health)
+- [x] Add Netlify routing config file (`_redirects`)
+- [x] Launch and deploy database on Supabase, backend on Render, and frontend on Netlify (100% Free Hosting Stack)
