@@ -8,13 +8,7 @@ import IncidentsPage from './pages/IncidentsPage';
 import IncidentDetailsPage from './pages/IncidentDetailsPage';
 import Layout from './components/Layout';
 import UsersPage from './pages/UsersPage';
-
-const SettingsPage = () => (
-  <div className="space-y-4">
-    <h1 className="text-2xl font-bold tracking-tight">Console Settings</h1>
-    <p className="text-sm font-mono text-text-secondary">User profile settings and system configurations. Phase 4 implementation target.</p>
-  </div>
-);
+import SettingsPage from './pages/SettingsPage';
 
 // ProtectedRoute Wrapper Component
 const ProtectedRoute = ({ children, roles }) => {
