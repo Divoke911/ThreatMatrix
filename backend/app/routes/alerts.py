@@ -1,4 +1,5 @@
 import uuid
+import logging
 from datetime import datetime
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
@@ -7,6 +8,8 @@ from app.models.alert import Alert
 from app.models.ai_report import AIReport
 from app.models.timeline import IncidentTimeline
 from app.utils.decorators import role_required
+
+logger = logging.getLogger(__name__)
 
 alerts_bp = Blueprint('alerts', __name__, url_prefix='/api/alerts')
 
@@ -36,9 +39,11 @@ def get_alerts():
         query = query.filter(Alert.source.in_(source_list))
 
     if search:
+        if len(search) > 200:
+            return jsonify({'msg': 'Search query must not exceed 200 characters.'}), 400
         search_pattern = f"%{search}%"
         query = query.filter(
-            (Alert.title.ilike(search_pattern)) | 
+            (Alert.title.ilike(search_pattern)) |
             (Alert.source_ip.ilike(search_pattern))
         )
 
@@ -185,7 +190,7 @@ def update_alert(alert_id):
                 db.session.add(timeline_event)
         except Exception as e:
             # Guard against potential formatting errors with JWT token claims
-            print("Timeline logging error:", e)
+            logger.error("Timeline logging error for alert %s: %s", str(alert.id), e, exc_info=True)
 
         db.session.commit()
 

@@ -14,8 +14,8 @@ incidents_bp = Blueprint('incidents', __name__, url_prefix='/api/incidents')
 @incidents_bp.route('/analysts', methods=['GET'])
 @jwt_required()
 def get_analysts():
-    """Returns a list of admins and analysts eligible for assignment."""
-    users = User.query.filter(User.role.in_(['admin', 'analyst'])).all()
+    """Returns a list of active admins and analysts eligible for assignment."""
+    users = User.query.filter(User.role.in_(['admin', 'analyst']), User.is_active == True).all()
     users_data = []
     for u in users:
         users_data.append({
@@ -52,6 +52,8 @@ def get_incidents():
                 pass
 
     if search:
+        if len(search) > 200:
+            return jsonify({'msg': 'Search query must not exceed 200 characters.'}), 400
         search_pattern = f"%{search}%"
         query = query.filter(
             (Incident.title.ilike(search_pattern)) |
@@ -184,15 +186,21 @@ def create_incident():
     if not title:
         return jsonify({'msg': 'Title is required to initialize an incident.'}), 400
 
+    if len(title) > 255:
+        return jsonify({'msg': 'Title must not exceed 255 characters.'}), 400
+
+    if description and len(description) > 5000:
+        return jsonify({'msg': 'Description must not exceed 5000 characters.'}), 400
+
     actor_id = uuid.UUID(get_jwt().get('sub'))
 
     assigned_uuid = None
     if assigned_to_val:
         try:
             assigned_uuid = uuid.UUID(assigned_to_val)
-            # Verify user exists
+            # Verify user exists, is active, and has a permitted role
             assignee = User.query.get(assigned_uuid)
-            if not assignee or assignee.role.value not in ['admin', 'analyst']:
+            if not assignee or not assignee.is_active or assignee.role.value not in ['admin', 'analyst']:
                 return jsonify({'msg': 'Assignee must be an active Analyst or Administrator.'}), 400
         except ValueError:
             return jsonify({'msg': 'Invalid assignee ID format.'}), 400
@@ -299,9 +307,15 @@ def update_incident(incident_id):
 
     # Apply changes
     if 'title' in data:
-        incident.title = data['title'].strip()
+        new_title = data['title'].strip()
+        if len(new_title) > 255:
+            return jsonify({'msg': 'Title must not exceed 255 characters.'}), 400
+        incident.title = new_title
     if 'description' in data:
-        incident.description = data['description'].strip()
+        new_desc = data['description'].strip()
+        if len(new_desc) > 5000:
+            return jsonify({'msg': 'Description must not exceed 5000 characters.'}), 400
+        incident.description = new_desc
 
     if 'status' in data:
         new_status = data['status'].lower().strip()
@@ -325,9 +339,9 @@ def update_incident(incident_id):
         if new_assignee_val:
             try:
                 new_assignee_uuid = uuid.UUID(new_assignee_val)
-                # Verify user exists
+                # Verify user exists, is active, and has a permitted role
                 user_obj = User.query.get(new_assignee_uuid)
-                if not user_obj or user_obj.role.value not in ['admin', 'analyst']:
+                if not user_obj or not user_obj.is_active or user_obj.role.value not in ['admin', 'analyst']:
                     return jsonify({'msg': 'Assignee must be an active Analyst or Administrator.'}), 400
                 
                 if incident.assigned_to != new_assignee_uuid:
@@ -517,6 +531,9 @@ def add_timeline_note(incident_id):
 
     if not note:
         return jsonify({'msg': 'Timeline note cannot be empty.'}), 400
+
+    if len(note) > 5000:
+        return jsonify({'msg': 'Timeline note must not exceed 5000 characters.'}), 400
 
     actor_id = uuid.UUID(get_jwt().get('sub'))
 

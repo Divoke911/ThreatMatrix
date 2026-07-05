@@ -34,7 +34,13 @@ def update_profile():
     
     if not name or not email:
         return jsonify({'msg': 'Name and email are required parameters.'}), 400
-        
+
+    if len(name) > 100:
+        return jsonify({'msg': 'Name must not exceed 100 characters.'}), 400
+
+    if len(email) > 120:
+        return jsonify({'msg': 'Email must not exceed 120 characters.'}), 400
+
     # Check if another user is already registered with this email address
     existing = User.query.filter(User.email == email, User.id != user.id).first()
     if existing:
