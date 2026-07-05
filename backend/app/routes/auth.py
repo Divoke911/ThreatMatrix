@@ -85,21 +85,5 @@ def refresh():
     new_access_token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
     return jsonify({"access_token": new_access_token}), 200
 
-# Verification routes (for testing RBAC)
-from app.utils.decorators import role_required
 
-@auth_bp.route('/test-admin', methods=['GET'])
-@role_required('admin')
-def test_admin():
-    return jsonify({"msg": "Admin access granted"}), 200
-
-@auth_bp.route('/test-analyst', methods=['GET'])
-@role_required('analyst')
-def test_analyst():
-    return jsonify({"msg": "Analyst access granted"}), 200
-
-@auth_bp.route('/test-viewer', methods=['GET'])
-@role_required('viewer')
-def test_viewer():
-    return jsonify({"msg": "Viewer access granted"}), 200
 
