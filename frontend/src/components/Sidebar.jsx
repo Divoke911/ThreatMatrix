@@ -32,9 +32,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, userRole }) => {
       {/* Brand Header */}
       <div className="flex items-center justify-between p-4 border-b border-dark-border h-16">
         <div className="flex items-center space-x-3 overflow-hidden">
-          <Shield className="w-6 h-6 text-accent-cyan flex-shrink-0" />
+          <Shield className="w-6 h-6 text-accent-lime flex-shrink-0" />
           {!isCollapsed && (
-            <span className="font-mono font-bold text-lg tracking-wider text-accent-cyan uppercase whitespace-nowrap">
+            <span className="font-mono font-bold text-lg tracking-wider text-accent-lime uppercase whitespace-nowrap">
               ThreatMatrix
             </span>
           )}
@@ -58,8 +58,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, userRole }) => {
               className={({ isActive }) => `
                 flex items-center space-x-3 px-3 py-2.5 rounded transition-all duration-150 group relative
                 ${isActive
-                  ? 'bg-accent-cyan/10 text-accent-cyan border-l-2 border-accent-cyan font-medium'
-                  : 'text-text-secondary hover:bg-dark-hover hover:text-text-primary'
+                   ? 'bg-accent-lime/10 text-accent-lime border-l-2 border-accent-lime font-medium'
+                   : 'text-text-secondary hover:bg-dark-hover hover:text-text-primary'
                 }
               `}
             >

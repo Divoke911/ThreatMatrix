@@ -131,7 +131,7 @@ const AlertsPage = () => {
                 value={tempSearch}
                 onChange={(e) => setTempSearch(e.target.value)}
                 placeholder="Search alert title or source IP..."
-                className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
+                className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -142,7 +142,7 @@ const AlertsPage = () => {
             <select
               value={tempSeverity}
               onChange={(e) => setTempSeverity(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL LEVELS</option>
               <option value="critical">CRITICAL</option>
@@ -158,7 +158,7 @@ const AlertsPage = () => {
             <select
               value={tempStatus}
               onChange={(e) => setTempStatus(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL STATES</option>
               <option value="new">NEW</option>
@@ -174,7 +174,7 @@ const AlertsPage = () => {
             <select
               value={tempSource}
               onChange={(e) => setTempSource(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL LOGS</option>
               <option value="firewall">FIREWALL</option>
@@ -190,7 +190,7 @@ const AlertsPage = () => {
             <select
               value={tempSort}
               onChange={(e) => setTempSort(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="created_at_desc">TIME DESC (NEWEST)</option>
               <option value="created_at_asc">TIME ASC (OLDEST)</option>
@@ -213,7 +213,7 @@ const AlertsPage = () => {
       {/* Table Data Card */}
       <Card className="p-0 border border-dark-border overflow-hidden">
         {loading ? (
-          <div className="h-64 flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+          <div className="h-64 flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
             Filtering Ingested Logs...
           </div>
         ) : alerts.length === 0 ? (
@@ -239,15 +239,15 @@ const AlertsPage = () => {
                   <tr 
                     key={a.id} 
                     onClick={() => setSelectedAlertId(a.id)}
-                    className={`hover:bg-dark-hover/20 cursor-pointer transition-colors ${selectedAlertId === a.id ? 'bg-accent-cyan/5 border-l border-l-accent-cyan' : ''}`}
+                    className={`hover:bg-dark-hover/20 cursor-pointer transition-colors ${selectedAlertId === a.id ? 'bg-accent-lime/5 border-l-2 border-l-accent-lime' : ''}`}
                   >
                     <td className="py-3 px-4 text-center font-mono text-text-secondary text-[10px]">
-                      {(page - 1) * 15 + idx + 1}
+                       {(page - 1) * 15 + idx + 1}
                     </td>
                     <td className="py-3 px-4">
                       <Badge variant={a.severity}>{a.severity}</Badge>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-text-primary hover:text-accent-cyan transition-colors">
+                    <td className="py-3 px-4 font-semibold text-text-primary hover:text-accent-lime transition-colors">
                       {a.title}
                     </td>
                     <td className="py-3 px-4 font-mono text-[9px] text-text-secondary uppercase">

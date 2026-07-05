@@ -129,7 +129,7 @@ const UsersPage = () => {
       <div className="flex items-center justify-between border-b border-dark-border pb-4">
         <div>
           <h1 className="text-xl font-bold tracking-tight text-text-primary uppercase font-mono flex items-center gap-2">
-            <Shield className="text-accent-cyan" size={20} />
+            <Shield className="text-accent-lime" size={20} />
             <span>User Administration Console</span>
           </h1>
           <p className="text-xs text-text-secondary font-mono mt-1">
@@ -150,7 +150,7 @@ const UsersPage = () => {
           {error}
         </div>
       ) : loading ? (
-        <div className="min-h-[250px] flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+        <div className="min-h-[250px] flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
           Loading User Directory...
         </div>
       ) : (
@@ -177,7 +177,7 @@ const UsersPage = () => {
                         <div className="font-semibold text-text-primary flex items-center gap-1.5">
                           {u.name}
                           {isSelf && (
-                            <span className="text-[8px] font-mono bg-accent-cyan/10 text-accent-cyan border border-accent-cyan/20 px-1 rounded">
+                            <span className="text-[8px] font-mono bg-accent-lime/10 text-accent-lime border border-accent-lime/20 px-1 rounded">
                               YOU
                             </span>
                           )}
@@ -189,7 +189,7 @@ const UsersPage = () => {
                         <select
                           value={roleStr}
                           onChange={(e) => handleRoleChange(u, e.target.value)}
-                          className="bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2 py-1 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40"
+                          className="bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2 py-1 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40"
                         >
                           <option value="admin">ADMIN</option>
                           <option value="analyst">ANALYST</option>
@@ -259,14 +259,14 @@ const UsersPage = () => {
       {/* Add User Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-base/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md bg-dark-panel border border-dark-border rounded p-6 shadow-2xl relative">
+          <div className="w-full max-w-md bg-dark-panel border border-dark-border rounded-[24px] p-6 shadow-2xl relative">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-text-primary font-mono mb-4 flex items-center gap-1.5">
-              <UserPlus size={16} className="text-accent-cyan" />
+              <UserPlus size={16} className="text-accent-lime" />
               <span>Create System User Account</span>
             </h3>
 
             {modalError && (
-              <div className="p-3 mb-4 rounded border border-severity-critical/20 bg-severity-critical/10 text-severity-critical font-mono text-[10px] leading-relaxed flex items-start gap-1.5">
+              <div className="p-3 mb-4 rounded-xl border border-severity-critical/20 bg-severity-critical/10 text-severity-critical font-mono text-[10px] leading-relaxed flex items-start gap-1.5">
                 <ShieldAlert size={14} className="shrink-0 mt-0.5" />
                 <span>{modalError}</span>
               </div>
@@ -280,7 +280,7 @@ const UsersPage = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none"
                   placeholder="e.g. Lead Analyst John"
                 />
               </div>
@@ -292,7 +292,7 @@ const UsersPage = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                   placeholder="e.g. john@threatmatrix.com"
                 />
               </div>
@@ -303,7 +303,7 @@ const UsersPage = () => {
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                    className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                   >
                     <option value="admin">ADMIN</option>
                     <option value="analyst">ANALYST</option>
@@ -319,7 +319,7 @@ const UsersPage = () => {
                     minLength={6}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                    className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                     placeholder="Min 6 characters"
                   />
                 </div>

@@ -16,7 +16,7 @@ const ProtectedRoute = ({ children, roles }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-dark-base text-accent-cyan font-mono text-xs tracking-widest uppercase">
+      <div className="flex items-center justify-center min-h-screen bg-dark-base text-accent-lime font-mono text-xs tracking-widest uppercase">
         Initializing Security Core...
       </div>
     );

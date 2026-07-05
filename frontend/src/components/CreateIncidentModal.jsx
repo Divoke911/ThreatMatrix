@@ -70,21 +70,21 @@ const CreateIncidentModal = ({ isOpen, onClose, onCreated, preLinkedAlerts = [] 
   return (
     <div className="fixed inset-0 bg-dark-base/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-lg p-6 glass-panel relative overflow-hidden" hoverGlow={false}>
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent-cyan to-transparent shadow-glow-cyan" />
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-accent-lime to-transparent shadow-glow-lime" />
         
         {/* Title bar */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center space-x-2">
-            <ShieldAlert className="w-5 h-5 text-accent-cyan" />
+            <ShieldAlert className="w-5 h-5 text-accent-lime" />
             <h2 className="text-sm font-mono uppercase tracking-widest text-text-primary">Initialize Incident</h2>
           </div>
-          <button onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 rounded hover:bg-dark-hover">
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary p-1 rounded-full hover:bg-dark-hover">
             <X size={16} />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 mb-4 rounded border border-severity-critical/20 bg-severity-critical/10 text-severity-critical text-xs font-mono">
+          <div className="p-3 mb-4 rounded-2xl border border-severity-critical/20 bg-severity-critical/10 text-severity-critical text-xs font-mono">
             {error}
           </div>
         )}
@@ -98,7 +98,7 @@ const CreateIncidentModal = ({ isOpen, onClose, onCreated, preLinkedAlerts = [] 
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. INC-1002: Credentials harvesting detection"
-              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
+              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
             />
           </div>
 
@@ -109,7 +109,7 @@ const CreateIncidentModal = ({ isOpen, onClose, onCreated, preLinkedAlerts = [] 
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Summarize target assets affected, impact, and initial audit logs..."
-              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
+              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
             />
           </div>
 
@@ -118,7 +118,7 @@ const CreateIncidentModal = ({ isOpen, onClose, onCreated, preLinkedAlerts = [] 
             <select
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-2 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-2 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">LEAVE UNASSIGNED (OPEN)</option>
               {analysts.map(a => (
@@ -128,9 +128,9 @@ const CreateIncidentModal = ({ isOpen, onClose, onCreated, preLinkedAlerts = [] 
           </div>
 
           {preLinkedAlerts.length > 0 && (
-            <div className="p-3 bg-dark-base border border-dark-border rounded">
+            <div className="p-3 bg-dark-base border border-dark-border rounded-xl">
               <span className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1.5">Escalated Alerts Context</span>
-              <ul className="space-y-1 text-[10px] font-mono text-accent-cyan">
+              <ul className="space-y-1 text-[10px] font-mono text-accent-lime">
                 {preLinkedAlerts.map(a => (
                   <li key={a.id} className="truncate">• {a.title}</li>
                 ))}

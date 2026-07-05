@@ -125,8 +125,8 @@ const IncidentDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
-        Loading Incident Audit Parameters...
+      <div className="min-h-[400px] flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
+        Loading Incident telemetry details...
       </div>
     );
   }
@@ -215,7 +215,7 @@ const IncidentDetailsPage = () => {
                   disabled={otherInputsDisabled}
                   value={tempAssignedTo}
                   onChange={(e) => setTempAssignedTo(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <option value="">UNASSIGNED</option>
                   {Array.isArray(analysts) && analysts.map(a => (
@@ -230,7 +230,7 @@ const IncidentDetailsPage = () => {
                   disabled={statusSelectDisabled}
                   value={tempStatus}
                   onChange={(e) => setTempStatus(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <option value="open">OPEN</option>
                   <option value="investigating">INVESTIGATING</option>
@@ -253,7 +253,7 @@ const IncidentDetailsPage = () => {
                   value={tempResolutionNotes}
                   onChange={(e) => setTempResolutionNotes(e.target.value)}
                   placeholder="Describe resolution actions, mitigation steps, and confirmation logs..."
-                  className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+                  className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
                 />
               </div>
             )}
@@ -278,13 +278,13 @@ const IncidentDetailsPage = () => {
         {/* Right Column: Linked Alerts */}
         <div className="space-y-6">
           <Card className="space-y-4 bg-dark-panel/40 border border-dark-border">
-             <h3 className="text-xs font-mono text-text-secondary uppercase tracking-widest border-b border-dark-border pb-2 flex items-center space-x-1.5">
-              <LinkIcon size={12} className="text-accent-cyan" />
+              <h3 className="text-xs font-mono text-text-secondary uppercase tracking-widest border-b border-dark-border pb-2 flex items-center space-x-1.5">
+              <LinkIcon size={12} className="text-accent-lime" />
               <span>Correlated alerts ({(incident?.alerts?.length || 0)})</span>
             </h3>
 
             {(incident?.alerts?.length || 0) === 0 ? (
-              <div className="text-xs font-mono text-text-secondary p-4 bg-dark-hover/15 rounded border border-dashed border-dark-border text-center">
+              <div className="text-xs font-mono text-text-secondary p-4 bg-dark-hover/15 rounded-xl border border-dashed border-dark-border text-center">
                 NO LINKED SECURITY ALERTS
               </div>
             ) : (
@@ -292,7 +292,7 @@ const IncidentDetailsPage = () => {
                 {Array.isArray(incident?.alerts) && incident.alerts.map(alert => (
                   <div 
                     key={alert.id}
-                    className="p-3 bg-dark-base border border-dark-border rounded flex flex-col justify-between hover:border-accent-cyan/40 transition-colors"
+                    className="p-3 bg-dark-base border border-dark-border rounded-xl flex flex-col justify-between hover:border-accent-lime/40 transition-colors"
                   >
                     <div 
                       onClick={() => setSelectedAlertId(alert.id)}
@@ -302,7 +302,7 @@ const IncidentDetailsPage = () => {
                         <Badge variant={alert.severity}>{alert.severity}</Badge>
                         <span className="text-[9px] font-mono text-text-secondary">{(alert.source || '').toUpperCase()}</span>
                       </div>
-                      <h4 className="text-xs font-semibold text-text-primary hover:text-accent-cyan transition-colors truncate">
+                      <h4 className="text-xs font-semibold text-text-primary hover:text-accent-lime transition-colors truncate">
                         {alert.title}
                       </h4>
                       <span className="font-mono text-[9px] text-accent-blue mt-1 block">IP: {alert.source_ip || 'N/A'}</span>
@@ -328,15 +328,15 @@ const IncidentDetailsPage = () => {
           </Card>
 
           {/* Consolidated AI Assist Panel */}
-          <Card className="bg-gradient-to-br from-dark-panel to-dark-base border border-accent-cyan/15 space-y-3 p-5">
-            <h3 className="text-xs font-mono text-accent-cyan uppercase tracking-widest flex items-center space-x-1.5">
-              <Sparkles size={14} className="text-accent-cyan" />
+          <Card className="bg-gradient-to-br from-dark-panel to-dark-base border border-accent-lime/15 space-y-3 p-5">
+            <h3 className="text-xs font-mono text-accent-lime uppercase tracking-widest flex items-center space-x-1.5">
+              <Sparkles size={14} className="text-accent-lime" />
               <span>Consolidated AI Assist</span>
             </h3>
             <p className="text-[11px] text-text-secondary leading-relaxed">
               Consolidation algorithms aggregate MITRE alignments and mitigation summaries across linked alerts automatically. Link alerts to generate response plans.
             </p>
-            <div className="text-[10px] font-mono p-2.5 bg-dark-base/40 border border-dark-border rounded text-text-secondary">
+            <div className="text-[10px] font-mono p-2.5 bg-dark-base/40 border border-dark-border rounded-xl text-text-secondary">
               SYSTEM STATUS: READY FOR INGESTION
             </div>
           </Card>
@@ -346,7 +346,7 @@ const IncidentDetailsPage = () => {
       {/* Chronological Timeline History */}
       <Card className="space-y-6 bg-dark-panel/40 border border-dark-border">
         <h3 className="text-xs font-mono text-text-secondary uppercase tracking-widest border-b border-dark-border pb-2 flex items-center space-x-1.5">
-          <History size={14} className="text-accent-cyan" />
+          <History size={14} className="text-accent-lime" />
           <span>Chronological Investigation Timeline</span>
         </h3>
 
@@ -366,13 +366,13 @@ const IncidentDetailsPage = () => {
               <div key={event.id} className="relative">
                 {/* Bullet indicator */}
                 <span className={`absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full border-2 border-dark-panel flex items-center justify-center 
-                  ${isCreated ? 'bg-sky-400' : isStatus ? 'bg-amber-400' : isAssign ? 'bg-indigo-400' : 'bg-accent-cyan'}
+                  ${isCreated ? 'bg-sky-400' : isStatus ? 'bg-amber-400' : isAssign ? 'bg-indigo-400' : 'bg-accent-lime'}
                 `} />
 
                 <div className="space-y-1">
                   <div className="flex items-center space-x-2 text-[10px] font-mono">
                     <span className="text-text-primary font-bold">{event.actor_name}</span>
-                    <span className="text-accent-cyan uppercase text-[9px]">{event.actor_role}</span>
+                    <span className="text-accent-lime uppercase text-[9px]">{event.actor_role}</span>
                     <span className="text-text-secondary">•</span>
                     <span className="text-text-secondary">{new Date(event.created_at).toLocaleString()}</span>
                   </div>
@@ -403,7 +403,7 @@ const IncidentDetailsPage = () => {
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               placeholder="Input logs, findings, or containment actions to commit to the timeline trail..."
-              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors font-mono"
+              className="w-full px-3 py-2 bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors font-mono"
             />
             <div className="flex justify-end">
               <Button

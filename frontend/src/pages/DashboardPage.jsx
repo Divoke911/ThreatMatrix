@@ -125,7 +125,7 @@ const DashboardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[400px] flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+      <div className="min-h-[400px] flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
         Loading System Telemetry Ingestions...
       </div>
     );
@@ -143,7 +143,7 @@ const DashboardPage = () => {
 
   // Cyber styling colors mapping
   const sourceColors = {
-    firewall: '#06b6d4',  // Cyan
+    firewall: '#b3ff00',  // Bright Lime
     ids: '#ff9d3d',       // Orange
     endpoint: '#e3b341',  // Yellow
     auth: '#a855f7'       // Purple
@@ -200,7 +200,7 @@ const DashboardPage = () => {
               size="sm"
               onClick={handleSimulateTraffic}
               disabled={simulating}
-              className="font-mono text-xs uppercase h-8 bg-accent-cyan/10 border border-accent-cyan text-accent-cyan hover:bg-accent-cyan/20 flex items-center"
+              className="font-mono text-xs uppercase h-8 bg-accent-lime/10 border border-accent-lime text-accent-lime hover:bg-accent-lime/20 flex items-center rounded-full px-3 py-1"
             >
               <Activity size={13} className={`mr-1 ${simulating ? 'animate-pulse' : ''}`} /> Simulate Traffic
             </Button>
@@ -216,7 +216,7 @@ const DashboardPage = () => {
         <Card hoverGlow>
           <div className="flex items-center justify-between">
             <span className="text-[9px] font-mono text-text-secondary uppercase tracking-wider">Ingested Log Streams</span>
-            <Server size={14} className="text-accent-cyan" />
+            <Server size={14} className="text-accent-lime" />
           </div>
           <p className="text-2xl font-bold text-text-primary mt-1.5 font-mono">{stats.total_logs}</p>
         </Card>
@@ -252,21 +252,21 @@ const DashboardPage = () => {
         <Card className="lg:col-span-2 p-5 bg-dark-panel/40 border border-dark-border flex flex-col justify-between">
           <div className="flex items-center justify-between border-b border-dark-border/40 pb-3 mb-4">
             <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest flex items-center gap-1.5">
-              <TrendingUp size={14} className="text-accent-cyan" />
+              <TrendingUp size={14} className="text-accent-lime" />
               <span>Log Ingestion Volume Trend</span>
             </h3>
             
             {/* Days Toggle */}
-            <div className="flex bg-dark-base border border-dark-border rounded p-0.5 font-mono text-[9px] font-semibold">
+            <div className="flex bg-dark-base border border-dark-border rounded-full p-0.5 font-mono text-[9px] font-semibold">
               <button 
                 onClick={() => handleToggleDays(7)}
-                className={`px-2 py-0.5 rounded transition-colors uppercase ${days === 7 ? 'bg-accent-cyan text-dark-base font-bold' : 'text-text-secondary hover:text-text-primary'}`}
+                className={`px-2 py-0.5 rounded-full transition-colors uppercase ${days === 7 ? 'bg-accent-lime text-black font-bold' : 'text-text-secondary hover:text-text-primary'}`}
               >
                 7D
               </button>
               <button 
                 onClick={() => handleToggleDays(30)}
-                className={`px-2 py-0.5 rounded transition-colors uppercase ${days === 30 ? 'bg-accent-cyan text-dark-base font-bold' : 'text-text-secondary hover:text-text-primary'}`}
+                className={`px-2 py-0.5 rounded-full transition-colors uppercase ${days === 30 ? 'bg-accent-lime text-black font-bold' : 'text-text-secondary hover:text-text-primary'}`}
               >
                 30D
               </button>
@@ -278,8 +278,8 @@ const DashboardPage = () => {
               <AreaChart data={stats.alerts_trend || []} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                 <defs>
                   <linearGradient id="alertGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.25}/>
-                    <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.0}/>
+                    <stop offset="5%" stopColor="#b3ff00" stopOpacity={0.25}/>
+                    <stop offset="95%" stopColor="#b3ff00" stopOpacity={0.0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#161b22" opacity={0.3} />
@@ -291,10 +291,10 @@ const DashboardPage = () => {
                 />
                 <YAxis stroke="#8b949e" tick={{ fontSize: 9, fontFamily: 'monospace' }} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }} 
-                  labelClassName="text-accent-cyan font-bold"
+                  contentStyle={{ backgroundColor: '#161616', borderColor: 'rgba(255,255,255,0.04)', color: '#ffffff', fontSize: 10, fontFamily: 'monospace', borderRadius: '12px' }} 
+                  labelClassName="text-accent-lime font-bold"
                 />
-                <Area type="monotone" dataKey="count" name="Alerts" stroke="#06b6d4" strokeWidth={1.5} fillOpacity={1} fill="url(#url(#alertGlow))" />
+                <Area type="monotone" dataKey="count" name="Alerts" stroke="#b3ff00" strokeWidth={1.5} fillOpacity={1} fill="url(#alertGlow)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -322,7 +322,7 @@ const DashboardPage = () => {
                   ))}
                 </Pie>
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }}
+                  contentStyle={{ backgroundColor: '#161616', borderColor: 'rgba(255,255,255,0.04)', color: '#ffffff', fontSize: 10, fontFamily: 'monospace', borderRadius: '12px' }}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -357,9 +357,9 @@ const DashboardPage = () => {
                 <XAxis dataKey="name" stroke="#8b949e" tick={{ fontSize: 7, fontFamily: 'monospace' }} />
                 <YAxis stroke="#8b949e" tick={{ fontSize: 9, fontFamily: 'monospace' }} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: '#161b22', borderColor: '#30363d', color: '#e6edf3', fontSize: 10, fontFamily: 'monospace' }}
+                  contentStyle={{ backgroundColor: '#161616', borderColor: 'rgba(255,255,255,0.04)', color: '#ffffff', fontSize: 10, fontFamily: 'monospace', borderRadius: '12px' }}
                 />
-                <Bar dataKey="count" name="Incidents" radius={[2, 2, 0, 0]}>
+                <Bar dataKey="count" name="Incidents" radius={[4, 4, 0, 0]}>
                   {barData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.fill} />
                   ))}
@@ -373,7 +373,7 @@ const DashboardPage = () => {
         <Card className="lg:col-span-2 p-5 bg-dark-panel/40 border border-dark-border space-y-4">
           <h3 className="text-xs font-mono text-text-primary uppercase tracking-widest border-b border-dark-border/40 pb-3 flex items-center justify-between">
             <span>Recent Threat Activities Ingestions</span>
-            <Clock size={13} className="text-accent-cyan animate-pulse" />
+            <Clock size={13} className="text-accent-lime animate-pulse" />
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -394,7 +394,7 @@ const DashboardPage = () => {
                     <div 
                       key={alert.id}
                       onClick={() => setSelectedAlertId(alert.id)}
-                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-cyan/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
+                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-lime/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
                     >
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="font-semibold text-text-primary truncate flex-1">{alert.title}</span>
@@ -414,7 +414,7 @@ const DashboardPage = () => {
             <div className="space-y-2.5">
               <span className="block text-[9px] font-mono text-text-secondary uppercase tracking-widest mb-1 flex items-center justify-between">
                 <span>Latest Incident Tickets</span>
-                <span className="text-accent-cyan">● Escalated</span>
+                <span className="text-accent-lime font-bold">● Escalated</span>
               </span>
 
               {stats.recent_incidents?.length === 0 ? (
@@ -427,7 +427,7 @@ const DashboardPage = () => {
                     <div 
                       key={inc.id}
                       onClick={() => navigate(`/incidents/${inc.id}`)}
-                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-cyan/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
+                      className="p-2.5 bg-dark-base/40 border border-dark-border hover:border-accent-lime/40 rounded flex flex-col justify-between cursor-pointer hover:bg-dark-hover/10 transition-all text-xs"
                     >
                       <div className="flex items-center justify-between gap-2 mb-1">
                         <span className="font-semibold text-text-primary truncate flex-1">{inc.title}</span>
@@ -456,26 +456,20 @@ const DashboardPage = () => {
         />
       )}
 
-      {/* Simulation Toast Notification */}
       {toast && toast.visible && (
-        <div className={`fixed top-4 right-4 z-50 max-w-sm rounded border p-4 shadow-lg font-mono text-xs transition-all duration-300 ${
+        <div className={`fixed top-4 right-4 z-50 max-w-sm rounded-2xl border p-4 shadow-lg font-mono text-xs transition-all duration-300 ${
           toast.type === 'threat'
-            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in'
+            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in shadow-[0_4px_20px_rgba(248,81,73,0.15)]'
             : toast.type === 'error'
-            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in'
-            : 'bg-dark-panel/95 border-accent-cyan/50 text-text-primary animate-slide-in'
+            ? 'bg-dark-panel/95 border-severity-critical/50 text-severity-critical animate-slide-in shadow-[0_4px_20px_rgba(248,81,73,0.15)]'
+            : 'bg-dark-panel/95 border-accent-lime/50 text-text-primary animate-slide-in shadow-[0_4px_20px_rgba(179,255,0,0.15)]'
         }`}
-        style={{
-          boxShadow: toast.type === 'threat'
-            ? '0 0 15px rgba(239, 68, 68, 0.25)'
-            : '0 0 15px rgba(6, 182, 212, 0.15)'
-        }}
         >
           <div className="flex items-start gap-2.5">
             <span className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
               toast.type === 'threat' || toast.type === 'error'
                 ? 'bg-severity-critical animate-pulse'
-                : 'bg-accent-cyan animate-pulse'
+                : 'bg-accent-lime animate-pulse'
             }`} />
             <div>
               <h4 className="font-bold uppercase tracking-wider mb-1 flex items-center justify-between">

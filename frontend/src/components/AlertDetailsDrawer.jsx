@@ -139,19 +139,19 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-dark-border bg-dark-base/40">
         <div className="flex items-center space-x-2.5">
-          <ShieldAlert className="w-5 h-5 text-accent-cyan" />
+          <ShieldAlert className="w-5 h-5 text-accent-lime" />
           <span className="font-mono text-[10px] text-text-secondary uppercase tracking-widest">Alert Inspector</span>
         </div>
         <button 
           onClick={onClose}
-          className="p-1 hover:bg-dark-hover rounded transition-colors text-text-secondary hover:text-text-primary"
+          className="p-1 hover:bg-dark-hover rounded-full transition-colors text-text-secondary hover:text-text-primary"
         >
           <X size={18} />
         </button>
       </div>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+        <div className="flex-1 flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
           Injecting Alert Payload Context...
         </div>
       ) : error ? (
@@ -223,7 +223,7 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                   disabled={isViewer || updating}
                   value={tempStatus}
                   onChange={(e) => setTempStatus(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
                 >
                   <option value="new">NEW</option>
                   <option value="in_review">IN REVIEW</option>
@@ -237,7 +237,7 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                   disabled={isViewer || updating}
                   value={tempSeverity}
                   onChange={(e) => setTempSeverity(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none transition-colors disabled:opacity-40 disabled:cursor-not-allowed font-mono"
                 >
                   <option value="low">LOW</option>
                   <option value="medium">MEDIUM</option>
@@ -266,10 +266,10 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
           {/* Raw Log payload */}
           <div>
             <h4 className="text-[10px] font-mono text-text-secondary uppercase tracking-wider mb-2 flex items-center space-x-1.5">
-              <Terminal size={12} className="text-accent-cyan" />
+              <Terminal size={12} className="text-accent-lime" />
               <span>Raw Syslog Payload</span>
             </h4>
-            <pre className="p-4 rounded bg-dark-base border border-dark-border overflow-auto max-h-48 text-[10px] font-mono text-accent-cyan/90 leading-relaxed scrollbar-thin select-all">
+            <pre className="p-4 rounded-xl bg-dark-base border border-dark-border overflow-auto max-h-48 text-[10px] font-mono text-accent-lime/90 leading-relaxed scrollbar-thin select-all">
               {JSON.stringify(alert.raw_log, null, 2)}
             </pre>
           </div>
@@ -278,14 +278,14 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
           <div>
             <h4 className="text-[10px] font-mono text-text-secondary uppercase tracking-wider mb-2 flex items-center justify-between">
               <div className="flex items-center space-x-1.5">
-                <Sparkles size={12} className="text-accent-cyan" />
+                <Sparkles size={12} className="text-accent-lime" />
                 <span>AI Analyst Insights</span>
               </div>
               {alert.ai_reports && alert.ai_reports.length > 0 && !isViewer && (
                 <button 
                   onClick={() => handleRunAIAnalysis(true)} 
                   disabled={aiLoading}
-                  className="text-[8px] font-mono text-accent-cyan hover:underline uppercase disabled:opacity-40"
+                  className="text-[8px] font-mono text-accent-lime hover:underline uppercase disabled:opacity-40"
                 >
                   {aiLoading ? 'Refreshing...' : 'Force Refresh'}
                 </button>
@@ -293,9 +293,9 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
             </h4>
             
             {aiLoading ? (
-              <div className="p-5 rounded bg-dark-panel/40 border border-dark-border/40 text-center space-y-3">
-                <RefreshCw className="mx-auto text-accent-cyan animate-spin" size={18} />
-                <p className="text-[10px] font-mono text-accent-cyan tracking-wider uppercase">AI Analyst reasoning in progress...</p>
+              <div className="p-5 rounded-xl bg-dark-panel/40 border border-dark-border/40 text-center space-y-3">
+                <RefreshCw className="mx-auto text-accent-lime animate-spin" size={18} />
+                <p className="text-[10px] font-mono text-accent-lime tracking-wider uppercase">AI Analyst reasoning in progress...</p>
                 <p className="text-[9px] text-text-secondary font-mono">This may take 3-5 seconds to generate & schema-validate response.</p>
               </div>
             ) : aiError ? (
@@ -314,11 +314,11 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                   ⚠️ AI-Generated Content - Verify accuracy and cross-reference with timeline notes.
                 </div>
                 {alert.ai_reports.map(report => (
-                  <div key={report.id} className="p-4 rounded bg-gradient-to-br from-dark-panel to-dark-base border border-accent-cyan/15 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 bg-accent-cyan/10 border-l border-b border-accent-cyan/20 text-[8px] font-mono px-2 py-0.5 text-accent-cyan uppercase">
+                  <div key={report.id} className="p-4 rounded-xl bg-gradient-to-br from-dark-panel to-dark-base border border-accent-lime/15 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 bg-accent-lime/10 border-l border-b border-accent-lime/20 text-[8px] font-mono px-2 py-0.5 text-accent-lime uppercase">
                       {report.model_used}
                     </div>
-                    <span className="text-[9px] font-mono text-accent-cyan/85 uppercase block mb-2">{report.report_type} REPORT</span>
+                    <span className="text-[9px] font-mono text-accent-lime/85 uppercase block mb-2">{report.report_type} REPORT</span>
                     <div className="text-xs space-y-2 text-text-primary leading-relaxed">
                       {report.report_type === 'explanation' && (
                         <>
@@ -336,8 +336,8 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
                       {report.report_type === 'mitre_mapping' && (
                         <div className="space-y-2 font-mono text-[9px] mt-2">
                           {Array.isArray(report.content?.techniques) && report.content.techniques.map((tech, idx) => (
-                            <div key={idx} className="p-2 bg-dark-base border border-dark-border rounded">
-                              <p className="text-accent-cyan font-semibold">{tech.id}: {tech.name}</p>
+                            <div key={idx} className="p-2 bg-dark-base border border-dark-border rounded-xl">
+                              <p className="text-accent-lime font-semibold">{tech.id}: {tech.name}</p>
                               <p className="text-text-secondary text-[8px]">Tactic: {tech.tactic}</p>
                               <p className="text-text-primary mt-1">{tech.rationale}</p>
                             </div>
@@ -370,12 +370,12 @@ const AlertDetailsDrawer = ({ alertId, onClose, userRole, onAlertUpdated }) => {
           {/* Escalations Footer */}
           <div className="pt-4 border-t border-dark-border flex flex-col gap-3">
             {isLinking ? (
-              <div className="p-3 bg-dark-base border border-dark-border rounded space-y-3">
+              <div className="p-3 bg-dark-base border border-dark-border rounded-xl space-y-3">
                 <label className="block text-[9px] font-mono text-text-secondary uppercase tracking-wider">Select Target Incident</label>
                 <select
                   value={targetIncidentId}
                   onChange={(e) => setTargetIncidentId(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
                 >
                   <option value="">-- SELECT ACTIVE TICKET --</option>
                   {Array.isArray(activeIncidents) && activeIncidents.map(inc => (

@@ -33,7 +33,7 @@ const Layout = ({ children }) => {
             <input
               type="text"
               placeholder="Search alerts, IPs, incidents..."
-              className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border rounded text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-cyan transition-colors"
+              className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border rounded-xl text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent-lime transition-colors"
             />
           </div>
 
@@ -48,9 +48,9 @@ const Layout = ({ children }) => {
             <div className="flex items-center space-x-3 pl-2 border-l border-dark-border">
               <div className="flex flex-col text-right hidden sm:flex">
                 <span className="text-xs font-semibold text-text-primary">{user?.name}</span>
-                <span className="text-[10px] font-mono text-accent-cyan uppercase">{user?.role}</span>
+                <span className="text-[10px] font-mono text-accent-lime uppercase">{user?.role}</span>
               </div>
-              <div className="w-8 h-8 rounded-full bg-dark-hover border border-dark-border flex items-center justify-center text-accent-cyan">
+              <div className="w-8 h-8 rounded-full bg-dark-hover border border-dark-border flex items-center justify-center text-accent-lime">
                 <UserIcon size={16} />
               </div>
             </div>

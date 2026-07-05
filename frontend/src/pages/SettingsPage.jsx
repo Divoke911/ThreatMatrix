@@ -106,7 +106,7 @@ const SettingsPage = () => {
       {/* Top Header */}
       <div className="border-b border-dark-border pb-4">
         <h1 className="text-xl font-bold tracking-tight text-text-primary uppercase font-mono flex items-center gap-2">
-          <Settings className="text-accent-cyan" size={20} />
+          <Settings className="text-accent-lime" size={20} />
           <span>Console Settings & Profile</span>
         </h1>
         <p className="text-xs text-text-secondary font-mono mt-1">
@@ -120,7 +120,7 @@ const SettingsPage = () => {
           onClick={() => setActiveTab('profile')}
           className={`px-4 py-2 border-b-2 font-semibold uppercase tracking-wider transition-colors duration-150 ${
             activeTab === 'profile'
-              ? 'border-accent-cyan text-accent-cyan bg-accent-cyan/5'
+              ? 'border-accent-lime text-accent-lime bg-accent-lime/5'
               : 'border-transparent text-text-secondary hover:text-text-primary'
           }`}
         >
@@ -130,7 +130,7 @@ const SettingsPage = () => {
           onClick={() => setActiveTab('password')}
           className={`px-4 py-2 border-b-2 font-semibold uppercase tracking-wider transition-colors duration-150 ${
             activeTab === 'password'
-              ? 'border-accent-cyan text-accent-cyan bg-accent-cyan/5'
+              ? 'border-accent-lime text-accent-lime bg-accent-lime/5'
               : 'border-transparent text-text-secondary hover:text-text-primary'
           }`}
         >
@@ -142,7 +142,7 @@ const SettingsPage = () => {
         {activeTab === 'profile' ? (
           <Card className="border border-dark-border bg-dark-panel/20 p-6 space-y-6">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-text-primary font-mono flex items-center gap-1.5 border-b border-dark-border/40 pb-2">
-              <User size={14} className="text-accent-cyan" />
+              <User size={14} className="text-accent-lime" />
               <span>Modify User Profile Info</span>
             </h3>
 
@@ -163,15 +163,15 @@ const SettingsPage = () => {
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               <div>
                 <label className="block text-[9px] font-mono text-text-secondary uppercase mb-2">Account Privilege (Read-only)</label>
-                <div className="bg-dark-base border border-dark-border/40 rounded px-3 py-2 text-xs text-text-secondary font-mono flex items-center gap-2 select-none">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent-cyan animate-pulse"></span>
+                <div className="bg-dark-base border border-dark-border/40 rounded-xl px-3 py-2 text-xs text-text-secondary font-mono flex items-center gap-2 select-none">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-lime animate-pulse"></span>
                   <span className="uppercase">{role}</span>
                 </div>
               </div>
 
               <div>
                 <label className="block text-[9px] font-mono text-text-secondary uppercase mb-2">Registration Timestamp</label>
-                <div className="bg-dark-base border border-dark-border/40 rounded px-3 py-2 text-xs text-text-secondary font-mono select-none">
+                <div className="bg-dark-base border border-dark-border/40 rounded-xl px-3 py-2 text-xs text-text-secondary font-mono select-none">
                   {createdAt ? new Date(createdAt).toLocaleString() : 'N/A'}
                 </div>
               </div>
@@ -183,7 +183,7 @@ const SettingsPage = () => {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none"
                 />
               </div>
 
@@ -194,7 +194,7 @@ const SettingsPage = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                 />
               </div>
 
@@ -213,19 +213,19 @@ const SettingsPage = () => {
         ) : (
           <Card className="border border-dark-border bg-dark-panel/20 p-6 space-y-6">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-text-primary font-mono flex items-center gap-1.5 border-b border-dark-border/40 pb-2">
-              <Key size={14} className="text-accent-cyan" />
+              <Key size={14} className="text-accent-lime" />
               <span>Rotate System Passkey</span>
             </h3>
 
             {passwordError && (
-              <div className="p-3 rounded border border-severity-critical/20 bg-severity-critical/10 text-severity-critical font-mono text-[10px] flex items-start gap-1.5">
+              <div className="p-3 rounded-xl border border-severity-critical/20 bg-severity-critical/10 text-severity-critical font-mono text-[10px] flex items-start gap-1.5">
                 <ShieldAlert size={14} className="shrink-0 mt-0.5" />
                 <span>{passwordError}</span>
               </div>
             )}
 
             {passwordSuccess && (
-              <div className="p-3 rounded border border-severity-closed/20 bg-severity-closed/10 text-severity-closed font-mono text-[10px] flex items-start gap-1.5">
+              <div className="p-3 rounded-xl border border-severity-closed/20 bg-severity-closed/10 text-severity-closed font-mono text-[10px] flex items-start gap-1.5">
                 <CheckCircle size={14} className="shrink-0 mt-0.5" />
                 <span>{passwordSuccess}</span>
               </div>
@@ -239,7 +239,7 @@ const SettingsPage = () => {
                   required
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                   placeholder="Verify existing credentials"
                 />
               </div>
@@ -252,7 +252,7 @@ const SettingsPage = () => {
                   minLength={6}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                   placeholder="Min 6 characters"
                 />
               </div>
@@ -264,7 +264,7 @@ const SettingsPage = () => {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
+                  className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none font-mono"
                   placeholder="Confirm rotated credentials"
                 />
               </div>

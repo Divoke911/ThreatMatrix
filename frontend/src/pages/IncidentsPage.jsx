@@ -159,7 +159,7 @@ const IncidentsPage = () => {
                 value={tempSearch}
                 onChange={(e) => setTempSearch(e.target.value)}
                 placeholder="Search incident title or description context..."
-                className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border focus:border-accent-cyan rounded text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
+                className="w-full pl-9 pr-4 py-1.5 bg-dark-input hover:bg-dark-input/85 focus:bg-dark-panel border border-dark-border focus:border-accent-lime rounded-xl text-xs text-text-primary placeholder-text-secondary/30 focus:outline-none transition-colors"
               />
             </div>
           </div>
@@ -170,7 +170,7 @@ const IncidentsPage = () => {
             <select
               value={tempStatus}
               onChange={(e) => setTempStatus(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL STATUSES</option>
               <option value="open">OPEN</option>
@@ -186,7 +186,7 @@ const IncidentsPage = () => {
             <select
               value={tempAssignedTo}
               onChange={(e) => setTempAssignedTo(e.target.value)}
-              className="w-full bg-dark-input border border-dark-border focus:border-accent-cyan rounded px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
+              className="w-full bg-dark-input border border-dark-border focus:border-accent-lime rounded-xl px-2.5 py-1.5 text-xs text-text-primary focus:outline-none font-mono"
             >
               <option value="">ALL RESPONDERS</option>
               <option value="unassigned">UNASSIGNED</option>
@@ -210,7 +210,7 @@ const IncidentsPage = () => {
       {/* Grid List Table */}
       <Card className="p-0 border border-dark-border overflow-hidden">
         {loading ? (
-          <div className="h-64 flex items-center justify-center text-xs font-mono text-accent-cyan tracking-widest uppercase">
+          <div className="h-64 flex items-center justify-center text-xs font-mono text-accent-lime tracking-widest uppercase">
             Ingesting Incident Matrix...
           </div>
         ) : incidents.length === 0 ? (
@@ -243,7 +243,7 @@ const IncidentsPage = () => {
                     <td className="py-3 px-4">
                       <Badge variant={inc.status}>{inc.status}</Badge>
                     </td>
-                    <td className="py-3 px-4 font-semibold text-text-primary hover:text-accent-cyan transition-colors">
+                    <td className="py-3 px-4 font-semibold text-text-primary hover:text-accent-lime transition-colors">
                       {inc.title}
                     </td>
                     <td className="py-3 px-4 font-mono text-[10px] text-text-secondary">

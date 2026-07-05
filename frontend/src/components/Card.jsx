@@ -5,7 +5,7 @@ const Card = ({ children, className = '', hoverGlow = false, onClick }) => {
     <div
       onClick={onClick}
       className={`
-        glass-panel rounded-lg p-5
+        glass-panel p-5
         ${hoverGlow ? 'glass-panel-hover' : ''}
         ${onClick ? 'cursor-pointer' : ''}
         ${className}
