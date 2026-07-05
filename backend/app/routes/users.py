@@ -94,9 +94,13 @@ def update_user_role(user_id):
     user = User.query.get_or_404(user_id)
     
     # Safeguard: if changing role AWAY from admin, verify not last remaining active admin
-    current_role = user.role.value if hasattr(user.role, 'value') else str(user.role)
+    current_role = (user.role.value if hasattr(user.role, 'value') else str(user.role)).lower().strip()
     if current_role == 'admin' and new_role != 'admin' and user.is_active:
-        active_admins_count = User.query.filter_by(role='admin', is_active=True).count()
+        active_users = User.query.filter_by(is_active=True).all()
+        active_admins_count = sum(
+            1 for u in active_users 
+            if (u.role.value if hasattr(u.role, 'value') else str(u.role)).lower().strip() == 'admin'
+        )
         if active_admins_count <= 1:
             return jsonify({'msg': 'Cannot remove the last remaining admin.'}), 400
             
@@ -122,9 +126,13 @@ def deactivate_user(user_id):
         return jsonify({'msg': 'User is already deactivated.'}), 400
         
     # Safeguard: if active admin, verify not last remaining active admin
-    current_role = user.role.value if hasattr(user.role, 'value') else str(user.role)
+    current_role = (user.role.value if hasattr(user.role, 'value') else str(user.role)).lower().strip()
     if current_role == 'admin':
-        active_admins_count = User.query.filter_by(role='admin', is_active=True).count()
+        active_users = User.query.filter_by(is_active=True).all()
+        active_admins_count = sum(
+            1 for u in active_users 
+            if (u.role.value if hasattr(u.role, 'value') else str(u.role)).lower().strip() == 'admin'
+        )
         if active_admins_count <= 1:
             return jsonify({'msg': 'Cannot remove the last remaining admin.'}), 400
             

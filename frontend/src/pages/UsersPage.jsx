@@ -26,8 +26,8 @@ const UsersPage = () => {
   const [modalError, setModalError] = useState('');
   const [modalLoading, setModalLoading] = useState(false);
 
-  const fetchUsers = async (p = page) => {
-    setLoading(true);
+  const fetchUsers = async (p = page, silent = false) => {
+    if (!silent) setLoading(true);
     setError('');
     try {
       const resp = await api.get('/users', { params: { page: p, limit: 10 } });
@@ -38,7 +38,7 @@ const UsersPage = () => {
       setError('Failed to fetch user directory.');
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -75,8 +75,7 @@ const UsersPage = () => {
         "WARNING: You are editing your own role. Changing your role to something other than Admin will revoke your administrative access and log you out immediately. Do you want to proceed?"
       );
       if (!confirmSelfDemote) {
-        // Reset/reload list to revert dropdown UI state
-        fetchUsers(page);
+        fetchUsers(page, true);
         return;
       }
     }
@@ -88,12 +87,12 @@ const UsersPage = () => {
         await logout();
         navigate('/login');
       } else {
-        fetchUsers(page);
+        fetchUsers(page, true);
       }
     } catch (err) {
       const msg = err.response?.data?.msg || 'Failed to modify user role.';
-      alert(msg);
-      fetchUsers(page); // Revert select value in UI on error
+      alert("Error: " + msg);
+      fetchUsers(page, true); // Revert select value in UI on error by reloading DB records silently
     }
   };
 
@@ -115,11 +114,12 @@ const UsersPage = () => {
         await logout();
         navigate('/login');
       } else {
-        fetchUsers(page);
+        fetchUsers(page, true);
       }
     } catch (err) {
       const msg = err.response?.data?.msg || 'Failed to deactivate user.';
-      alert(msg);
+      alert("Error: " + msg);
+      fetchUsers(page, true);
     }
   };
 
