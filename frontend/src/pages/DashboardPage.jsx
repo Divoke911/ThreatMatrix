@@ -258,7 +258,7 @@ const DashboardPage = () => {
                     labelClassName="text-accent-lime font-bold"
                   />
                   <Area 
-                    type="monotone" 
+                    type="linear" 
                     dataKey="count" 
                     name="Ingested Events" 
                     stroke="#b3ff00" 
@@ -446,22 +446,50 @@ const DashboardPage = () => {
 
             {/* Dotted Map Simulation */}
             <div className="h-36 w-full relative flex items-center justify-center bg-[#0d0d0d] rounded-2xl border border-white/[0.02] p-2 overflow-hidden">
-              <svg width="100%" height="100%" viewBox="0 0 200 100" fill="none" className="opacity-40">
-                <path d="M20,30 Q40,32 50,45 T90,40 T130,50 T180,35" stroke="#222" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
-                <path d="M30,60 Q60,65 80,75 T140,65 T170,70" stroke="#222" strokeWidth="1.5" strokeDasharray="3 3" fill="none" />
+              <svg width="100%" height="100%" viewBox="0 0 200 100" fill="none" className="opacity-70">
+                <style>{`
+                  @keyframes drawArc {
+                    to { stroke-dashoffset: -40; }
+                  }
+                  .arc-flow {
+                    stroke-dasharray: 4 4;
+                    animation: drawArc 2.5s linear infinite;
+                  }
+                  @keyframes pulseDot {
+                    0% { r: 1.5; opacity: 0.3; }
+                    50% { r: 3.5; opacity: 1; }
+                    100% { r: 1.5; opacity: 0.3; }
+                  }
+                  .pulse-dot {
+                    animation: pulseDot 2.5s ease-in-out infinite;
+                  }
+                `}</style>
+                {/* Dotted paths representing grid/map paths */}
+                <path d="M20,30 Q40,32 50,45 T90,40 T130,50 T180,35" stroke="#222" strokeWidth="1" strokeDasharray="2 2" fill="none" />
+                <path d="M30,60 Q60,65 80,75 T140,65 T170,70" stroke="#222" strokeWidth="1" strokeDasharray="2 2" fill="none" />
                 
-                {/* Attack Pins */}
-                <circle cx="65" cy="40" r="2.5" fill="#b3ff00" className="animate-pulse" />
-                <circle cx="120" cy="55" r="2.5" fill="#b3ff00" className="animate-pulse" />
-                <circle cx="150" cy="35" r="2.5" fill="#b3ff00" className="animate-pulse" />
+                {/* Attack Pins (Origins) */}
+                <circle cx="35" cy="40" r="2.2" fill="#ef4444" className="pulse-dot" style={{ animationDelay: '0s' }} />
+                <circle cx="85" cy="25" r="2.2" fill="#f59e0b" className="pulse-dot" style={{ animationDelay: '0.6s' }} />
+                <circle cx="170" cy="35" r="2.2" fill="#10b981" className="pulse-dot" style={{ animationDelay: '1.2s' }} />
+                <circle cx="150" cy="75" r="2.2" fill="#3b82f6" className="pulse-dot" style={{ animationDelay: '1.8s' }} />
                 
-                {/* Arc connections */}
-                <path d="M65,40 Q92.5,20 120,55" stroke="#b3ff00" strokeWidth="0.75" strokeDasharray="3 3" opacity="0.8" fill="none" />
-                <path d="M120,55 Q135,40 150,35" stroke="#b3ff00" strokeWidth="0.75" strokeDasharray="3 3" opacity="0.8" fill="none" />
+                {/* Target Pin (Database Center) */}
+                <circle cx="120" cy="55" r="3.2" fill="#b3ff00" className="pulse-dot" style={{ animationDelay: '0.3s' }} />
+                
+                {/* Arc connections with running dashes */}
+                {/* North America to Center */}
+                <path d="M35,40 Q77.5,15 120,55" stroke="#ef4444" strokeWidth="1" className="arc-flow" fill="none" opacity="0.8" />
+                {/* Europe to Center */}
+                <path d="M85,25 Q102.5,35 120,55" stroke="#f59e0b" strokeWidth="1" className="arc-flow" fill="none" opacity="0.8" />
+                {/* East Asia to Center */}
+                <path d="M170,35 Q145,45 120,55" stroke="#10b981" strokeWidth="1" className="arc-flow" fill="none" opacity="0.8" />
+                {/* Australia to Center */}
+                <path d="M150,75 Q135,65 120,55" stroke="#3b82f6" strokeWidth="1" className="arc-flow" fill="none" opacity="0.8" />
               </svg>
 
               <div className="absolute top-2 left-2 flex items-center space-x-1.5 text-[8px] font-mono bg-black/60 px-2 py-0.5 rounded border border-white/[0.04] text-text-secondary uppercase select-none">
-                <span className="w-1 h-1 rounded-full bg-accent-lime animate-ping" />
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-lime animate-ping" />
                 <span>Monitoring Live Map</span>
               </div>
             </div>
