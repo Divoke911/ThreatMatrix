@@ -37,3 +37,4 @@
   - [x] Amber and Cyan color balanced circular gauges (API capacity, Console health)
 - [x] Add Netlify routing config file (`_redirects`)
 - [x] Launch and deploy database on Supabase, backend on Render, and frontend on Netlify (100% Free Hosting Stack)
+- [x] Add repository screenshots (Dashboard, Login, Alerts) and update README.md for visual project presentation

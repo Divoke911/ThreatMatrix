@@ -16,6 +16,7 @@ The application has been fully redesigned to match the premium dark/lime SOC vis
     - Amber (API Load) and Cyan (Console Health) color balanced circular progress gauges.
   - Implemented Netlify redirects configuration (`_redirects` inside frontend public folder).
   - Deployed full stack application on a 100% free hosting architecture (Database: Supabase, Backend Docker service: Render, Frontend client site: Netlify).
+  - Added repository screenshots (Dashboard, Login, Alerts) and updated README.md visual presentation.
 - **Completed Phase 4 (Packaging & Polish)**:
   - **User Administration**: Implemented `/api/users` REST endpoints (Admin only) with pagination, soft deletes, duplicate creation locks, and active admins count safeguards. Integrated frontend `UsersPage.jsx` workspace.
   - **Console Settings**: Created `/api/settings` endpoints (`/profile` and `/password` rotation). Created frontend `SettingsPage.jsx` with tab configurations and password match validations.
