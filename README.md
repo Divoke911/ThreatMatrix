@@ -2,6 +2,20 @@
 
 ThreatMatrix is a modern Security Operations Center (SOC) dashboard built to aggregate system logs, manage security threats, track containment timelines, and leverage AI analysis for triage recommendations.
 
+## 🖼️ Console Screenshots
+
+### 🖥️ SOC Dashboard Console
+*Interactive threat operations dashboard displaying log ingestion charts, active threat focus targets, console load meters, latest threat alerts feed, and real-time global attack maps:*
+![Dashboard Screenshot](docs/screenshots/dashboard.png)
+
+### 🔐 Analyst Login Portal
+*Secure gateway authentication with multi-role access controls (Admin/Analyst/Viewer) and custom theme elements:*
+![Login Screenshot](docs/screenshots/login.png)
+
+### 🚨 Real-time Alerts Feed
+*Syslog ingestion categorization, IP tracking, state filters, and manual escalation actions panel:*
+![Alerts Screenshot](docs/screenshots/alerts.png)
+
 ---
 
 ## Technical Stack
